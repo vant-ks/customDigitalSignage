@@ -1,0 +1,18 @@
+# Node
+node_modules/
+dist/
+.vite/
+
+# Python
+api/.venv/
+api/__pycache__/
+api/**/__pycache__/
+api/*.egg-info/
+api/.env
+
+# OS
+.DS_Store
+
+# Zip artifacts
+*.zip
+node_modules
