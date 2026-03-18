@@ -1,0 +1,1 @@
+../_Utilities/MIGRATION_CRASH_PREVENTION_RULE.md

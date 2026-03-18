@@ -1,0 +1,17 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "mkdir": true,
+        "ln": true,
+        "unzip": true,
+        "cp": true,
+        "pip": true,
+        "pip3": true,
+        "python3.11": true,
+        "alembic": true,
+        "npm create": true,
+        "npx --yes create-vite@latest": true,
+        "npm install": true,
+        "npx tsc": true,
+        "git init": true
+    }
+}
