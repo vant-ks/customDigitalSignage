@@ -77,4 +77,45 @@ Documentation scaffold fully initialized for VANT Signage Platform.
 
 ---
 
-<!-- Add new sessions above this line, newest at top -->
+## Session 2 — Phase 1 build
+**Started:** (Session 2)
+**Status:** COMPLETED
+**Branch:** main
+**Tags:** feat, api, frontend, auth, displays, websocket, migration
+
+### Prompt 1: Review Phase 1 backend zip + build frontend scaffold
+**Request:** Review vant-signage-api.zip, verify/build on Phase 1, then scaffold the React frontend with Phase 0 artifacts matching vant-signage-dashboard.jsx.
+
+#### Actions Taken:
+1. Read PHASES.md (Phase 1 spec), read vant-signage-dashboard.jsx (UI reference)
+2. Extracted + reviewed vant-signage-api.zip — all 14 models, auth routes, device routes, WS manager verified solid
+3. Moved `vant-signage-api/` → `api/`, cleaned junk directories
+4. Created `api/migrations/versions/001_initial_schema.py` — 14-table initial Alembic migration
+5. Fixed `api/pyproject.toml` — added `[tool.setuptools.packages.find]` for setuptools
+6. Created `api/.env` from `.env.example`, updated CORS to include port 3031
+7. Installed Python deps in `api/.venv`, verified all imports clean
+8. Verified `alembic history` shows migration at head
+9. Created all frontend files: package.json, vite.config.ts, tsconfig.json, tailwind.config.js, postcss.config.js, index.html
+10. Created src/: index.css, main.tsx, App.tsx (nested routes via Outlet), types/index.ts
+11. Created src/services/: apiClient.ts (auto-refresh queue), wsService.ts (reconnect + heartbeat)
+12. Created src/stores/: authStore.ts (Zustand persist), displayStore.ts (WS handlers)
+13. Created src/components/layout/DashboardShell.tsx (sidebar + topbar + theme toggle)
+14. Created src/pages/: LoginPage.tsx, DisplaysPage.tsx (fleet view matching reference design)
+15. Ran `npm install` — 143 packages, 0 vulnerabilities
+16. TypeScript compile: 0 errors
+17. Created `.gitignore`, `git init`, first commit
+
+#### Files Changed:
+- `api/` — moved + cleaned, new migration, pyproject.toml fixed, .env created
+- `package.json`, `vite.config.ts`, `tsconfig.json`, `tailwind.config.js`, `postcss.config.js`, `index.html`
+- `src/` — 10+ source files (full list in DEVLOG.md Session 2 entry)
+- `.gitignore` — created
+
+#### Outcome: ✅ Complete
+Phase 1 fully implemented. Backend verified and ready to run (`alembic upgrade head` + uvicorn). Frontend scaffold complete and TypeScript-clean. Ready for Phase 2 (Media Library).
+
+---
+
+<!-- Session 1 below -->
+
+

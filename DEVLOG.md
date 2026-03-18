@@ -37,21 +37,46 @@ When complete, update to:
 
 ---
 
-## March 2026 (Session 1) — Project documentation setup
+## Session 2 — Phase 1: Backend review + React frontend scaffold
 
-### Branch: `main` *(pre-git / workspace init)*
+### Branch: `main`
 
 ### Overview
-Documentation scaffold initialized. `_Utilities` symlinked, `docs/` folder created with universal symlinks and project-specific local copies.
+Reviewed vant-signage-api.zip (Phase 1 backend attempt), verified it solid, moved to `api/`, fixed structural issues, installed deps, verified imports. Then scaffolded the complete Vite+React+TypeScript frontend with all Phase 0 artifacts.
 
 ---
 
-### 1. Documentation scaffold initialized
+### 2. Backend verification + fixes
 
 **Status:** ✅ COMPLETE
-**Tags:** docs, session-start, setup
-**Summary:** Symlinked _Utilities, created docs/ with universal symlinks (AI_AGENT_PROTOCOL, MIGRATION rules, RAILWAY_CLI_GUIDE, SERVER_MAP) and project-specific local copies (PROJECT_RULES, SESSION_START_PROTOCOL, SESSION_JOURNAL, DEVLOG, LAUNCH_SESSION, TODO_NEXT_SESSION).
+**Tags:** api, auth, migration, feat, displays, websocket
+**Commit:** (initial commit)
+**Files changed:** `api/` (moved from vant-signage-api/), `api/migrations/versions/001_initial_schema.py`, `api/pyproject.toml`, `api/.env`
+**Summary:** Verified all 14 ORM models, auth routes, device routes, WebSocket manager. Fixed: missing initial Alembic migration (wrote 14-table migration), missing `[tool.setuptools.packages.find]` in pyproject.toml, missing .env file. All imports clean, `alembic history` shows migration at head.
 
 ---
 
-<!-- Add new sessions above this line, newest at top -->
+### 3. Frontend scaffold (Phase 0 artifacts)
+
+**Status:** ✅ COMPLETE
+**Tags:** frontend, auth, displays, websocket, feat
+**Commit:** feat: Phase 1 — FastAPI backend + React frontend scaffold (b27516a)
+**Files changed:**
+- `package.json`, `vite.config.ts`, `tsconfig.json`, `tailwind.config.js`, `postcss.config.js`, `index.html`
+- `src/index.css`, `src/main.tsx`, `src/App.tsx`
+- `src/types/index.ts` — all TypeScript interfaces (14 entities + WS + manifest types)
+- `src/services/apiClient.ts` — JWT fetch wrapper with auto-refresh queue
+- `src/services/wsService.ts` — WebSocket service with reconnect + heartbeat
+- `src/stores/authStore.ts` — Zustand auth store (persisted)
+- `src/stores/displayStore.ts` — Zustand display store with WS handlers
+- `src/components/layout/DashboardShell.tsx` — sidebar + topbar + theme toggle
+- `src/pages/LoginPage.tsx` — login form (org_slug + email + password)
+- `src/pages/DisplaysPage.tsx` — fleet view with summary cards, grid/list toggle, filtering
+- `.gitignore`
+**Summary:** Complete frontend scaffold matching the design spec in `vant-signage-dashboard.jsx`. TypeScript compiles clean (0 errors). `npm install` clean (0 vulnerabilities).
+
+---
+
+<!-- Session 1 below -->
+
+

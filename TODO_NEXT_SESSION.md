@@ -7,27 +7,27 @@
 
 ## 🔴 High Priority (do first)
 
-1. **Scaffold project structure** — create `api/` (FastAPI), `src/` (React/Vite), `package.json`, `pyproject.toml`/`requirements.txt`
-2. **Initialize git repo** — `git init`, first commit with existing artifacts
-3. **Apply schema.sql** — create Railway PostgreSQL instance, apply schema, verify connectivity
+1. **Connect to Railway PostgreSQL** — set `DATABASE_URL` in `api/.env`, run `alembic upgrade head`, verify tables created
+2. **Smoke-test the API** — start uvicorn (port 3030), hit `/health`, test `POST /api/auth/register` + `/login`
+3. **Smoke-test the frontend** — `npm run dev` (port 3031), verify login page renders, confirm API proxy works
 
 ---
 
 ## 🟡 Next Up
 
-4. **Phase 1: Foundation + Security** — implement JWT auth endpoints (login, refresh, logout), bcrypt password hashing
-5. **Link Railway project** — create Railway service, set env vars, configure auto-deploy from `main`, update `LAUNCH_SESSION.md` with Railway URL
-6. **Vite dev server config** — configure vite.config.ts proxy for API at port 3030, confirm HMR works
+4. **Phase 2: Media Library API** — `GET/POST /api/media`, storage provider integration (S3/Backblaze/local), file upload with presigned URLs
+5. **Phase 2: Media page (frontend)** — Grid/list view, upload modal, folder tree, preview panel
+6. **Push to Railway** — create Railway service, set env vars, configure auto-deploy from `main`
 
 ---
 
 ## 🟢 Backlog
 
-7. Phase 2: Media Pipeline + Content Management
-8. Phase 3: Scheduling + Sync Engine
-9. Phase 4: Display Agent + Playback
-10. Phase 5: Provisioning Tools
-11. Phase 6: Monitoring, Alerts, Polish
+- Phase 3: Playlists — CRUD, drag-and-drop ordering, playlist builder UI
+- Phase 3: Schedules — time-based playlist assignment, weekly schedule grid UI
+- Phase 4: Display Agent (Python/Electron) — heartbeat, telemetry, content playback
+- Phase 5: Provisioning — token generation, agent installer script
+- Phase 6: Monitoring, alerts, audit log UI
 
 ---
 
