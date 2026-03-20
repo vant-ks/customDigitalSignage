@@ -12,6 +12,10 @@
         "npx --yes create-vite@latest": true,
         "npm install": true,
         "npx tsc": true,
-        "git init": true
+        "git init": true,
+        "git rm": true,
+        "git remote": true,
+        "git push": true,
+        "\"/Users/kevin/GJS": true
     }
 }

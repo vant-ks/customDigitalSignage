@@ -70,6 +70,9 @@ from app.api.routes.displays import router as displays_router
 from app.api.routes.groups import router as groups_router
 from app.api.routes.devices import router as devices_router
 from app.api.routes.users import router as users_router
+from app.api.routes.storage import router as storage_router
+from app.api.routes.media import router as media_router
+from app.api.routes.playlists import router as playlists_router
 from app.websocket.routes import router as ws_router
 
 app.include_router(auth_router)
@@ -77,6 +80,9 @@ app.include_router(displays_router)
 app.include_router(groups_router)
 app.include_router(devices_router)
 app.include_router(users_router)
+app.include_router(storage_router)
+app.include_router(media_router)
+app.include_router(playlists_router)
 app.include_router(ws_router)
 
 # ─── Rate limit auth endpoints ───────────────────────────────────────────────

@@ -293,5 +293,165 @@ class PaginatedResponse(BaseModel):
     total_pages: int
 
 
+# ─── Storage Providers ───────────────────────────────────────────────────────
+
+
+class StorageProviderResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    org_id: UUID
+    provider_type: str
+    label: str
+    root_folder: Optional[str] = None
+    is_active: bool
+    last_sync_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+    # credentials intentionally excluded
+
+
+class StorageProviderCreate(BaseModel):
+    provider_type: str = Field(pattern=r"^(dropbox|gdrive|onedrive)$")
+    label: str = Field(min_length=1, max_length=255)
+    root_folder: Optional[str] = None
+
+
+# ─── Media Assets ─────────────────────────────────────────────────────────────
+
+
+class MediaAssetCreate(BaseModel):
+    storage_id: UUID
+    name: str = Field(min_length=1, max_length=255)
+    source_path: str = Field(min_length=1)
+    file_type: str = Field(pattern=r"^(image|video|html_template|url|pdf)$")
+    mime_type: Optional[str] = None
+    folder: str = "/"
+    tags: list[str] = Field(default_factory=list)
+    template_schema: Optional[dict] = None
+    template_data: Optional[dict] = None
+
+
+class MediaAssetUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    folder: Optional[str] = None
+    tags: Optional[list[str]] = None
+    template_data: Optional[dict] = None
+
+
+class MediaAssetResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    org_id: UUID
+    storage_id: Optional[UUID] = None
+    name: str
+    file_type: str
+    mime_type: Optional[str] = None
+    file_size_bytes: Optional[int] = None
+    source_path: str
+    source_hash: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    processed_url: Optional[str] = None
+    processing_status: str
+    processing_error: Optional[str] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration_sec: Optional[float] = None
+    codec: Optional[str] = None
+    framerate: Optional[float] = None
+    template_schema: Optional[dict] = None
+    template_data: Optional[dict] = None
+    folder: str
+    tags: list[str]
+    created_at: datetime
+    updated_at: datetime
+
+
+# ─── Playlists ────────────────────────────────────────────────────────────────
+
+
+class PlaylistItemCreate(BaseModel):
+    media_id: UUID
+    position: int = Field(ge=0)
+    duration_sec: int = Field(default=10, ge=1, le=3600)
+    weight: int = Field(default=1, ge=1, le=100)
+    transition_type: Optional[str] = None
+    transition_ms: Optional[int] = Field(None, ge=0, le=5000)
+    valid_from: Optional[datetime] = None
+    valid_until: Optional[datetime] = None
+
+
+class PlaylistItemUpdate(BaseModel):
+    duration_sec: Optional[int] = Field(None, ge=1, le=3600)
+    weight: Optional[int] = Field(None, ge=1, le=100)
+    transition_type: Optional[str] = None
+    transition_ms: Optional[int] = Field(None, ge=0, le=5000)
+    valid_from: Optional[datetime] = None
+    valid_until: Optional[datetime] = None
+
+
+class PlaylistItemResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    playlist_id: UUID
+    media_id: UUID
+    position: int
+    duration_sec: int
+    weight: int
+    transition_type: Optional[str] = None
+    transition_ms: Optional[int] = None
+    valid_from: Optional[datetime] = None
+    valid_until: Optional[datetime] = None
+    created_at: datetime
+    media: Optional["MediaAssetResponse"] = None
+
+
+class PlaylistCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+    description: Optional[str] = None
+    play_mode: str = Field(default="sequential", pattern=r"^(sequential|shuffle|weighted)$")
+    transition_type: str = Field(default="cut")
+    transition_ms: int = Field(default=0, ge=0, le=5000)
+
+
+class PlaylistUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = None
+    play_mode: Optional[str] = Field(None, pattern=r"^(sequential|shuffle|weighted)$")
+    transition_type: Optional[str] = None
+    transition_ms: Optional[int] = Field(None, ge=0, le=5000)
+    is_active: Optional[bool] = None
+
+
+class PlaylistResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    org_id: UUID
+    name: str
+    description: Optional[str] = None
+    play_mode: str
+    transition_type: str
+    transition_ms: int
+    is_active: bool
+    items: list[PlaylistItemResponse] = []
+    created_at: datetime
+    updated_at: datetime
+
+    @property
+    def item_count(self) -> int:
+        return len(self.items)
+
+    @property
+    def total_duration_sec(self) -> int:
+        return sum(i.duration_sec for i in self.items)
+
+
+class PlaylistReorderRequest(BaseModel):
+    order: list[UUID]  # ordered list of PlaylistItem IDs
+
+
 # Forward ref resolution
 AuthResponse.model_rebuild()

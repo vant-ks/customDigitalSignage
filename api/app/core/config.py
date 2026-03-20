@@ -28,6 +28,20 @@ class Settings(BaseSettings):
     # Device heartbeat
     heartbeat_offline_threshold_seconds: int = 120
 
+    # ── OAuth app credentials per storage provider ──────────────────────
+    # Set these in .env or Railway environment variables.
+    dropbox_client_id: str = ""
+    dropbox_client_secret: str = ""
+
+    gdrive_client_id: str = ""
+    gdrive_client_secret: str = ""
+
+    onedrive_client_id: str = ""
+    onedrive_client_secret: str = ""
+
+    # ── Frontend URL (used to build OAuth redirect URIs) ────────────────
+    frontend_url: str = "http://localhost:3031"
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
     @property

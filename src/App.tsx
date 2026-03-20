@@ -3,6 +3,8 @@ import { useAuthStore } from './stores/authStore'
 import DashboardShell from './components/layout/DashboardShell'
 import DisplaysPage from './pages/DisplaysPage'
 import LoginPage from './pages/LoginPage'
+import MediaPage from './pages/MediaPage'
+import PlaylistBuilderPage from './pages/PlaylistBuilderPage'
 
 function PrivateRoute() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -17,6 +19,8 @@ export default function App() {
         <Route element={<DashboardShell />}>
           <Route index element={<Navigate to="/displays" replace />} />
           <Route path="/displays" element={<DisplaysPage />} />
+          <Route path="/media" element={<MediaPage />} />
+          <Route path="/playlists" element={<PlaylistBuilderPage />} />
         </Route>
       </Route>
     </Routes>

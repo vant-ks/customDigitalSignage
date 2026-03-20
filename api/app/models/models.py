@@ -347,6 +347,9 @@ class PlaylistItem(Base):
     )
 
     playlist: Mapped["Playlist"] = relationship(back_populates="items")
+    media: Mapped[Optional["MediaAsset"]] = relationship(
+        "MediaAsset", foreign_keys=[media_id], lazy="joined"
+    )
 
 
 # ─── Schedules ───────────────────────────────────────────────────────────────

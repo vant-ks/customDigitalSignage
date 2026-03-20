@@ -37,6 +37,52 @@ When complete, update to:
 
 ---
 
+## Session 3 — Phase 2: Media Pipeline + Content Management
+
+### Branch: `main`
+
+### Overview
+Phase 2 session start. Building storage provider OAuth adapters, media asset CRUD, background processing pipeline (ffmpeg/Pillow), playlist CRUD, and frontend Media Library + Playlist Builder pages.
+
+---
+
+### 1. Session start
+
+**Status:** ✅ COMPLETE
+**Tags:** session-start
+**Files changed:** `DEVLOG.md`, `docs/SESSION_JOURNAL.md`
+**Summary:** Session initialized, both dev servers confirmed up (API :3030 healthy, Vite :3031 200), git clean on main (HEAD ddcd0f7).
+
+---
+
+### 2. Phase 2 build — storage adapters, media pipeline, playlists, frontend
+
+**Status:** ✅ COMPLETE
+**Tags:** feat, api, frontend, media, playlists, auth
+**Commit:** (pending)
+**Files changed:**
+- `api/app/services/storage/` — new: `base.py`, `crypto.py`, `dropbox_adapter.py`, `gdrive_adapter.py`, `onedrive_adapter.py`, `factory.py`
+- `api/app/services/media_processor.py` — image + video processing, thumbnail generation (Pillow + ffprobe/ffmpeg)
+- `api/app/api/routes/storage.py` — OAuth URL gen, code exchange, browse
+- `api/app/api/routes/media.py` — media CRUD, thumbnail serve, template preview
+- `api/app/api/routes/playlists.py` — playlist + item CRUD, reorder
+- `api/app/models/models.py` — PlaylistItem.media relationship
+- `api/app/schemas/schemas.py` — StorageProvider, MediaAsset, Playlist schemas
+- `api/app/core/config.py` — OAuth client ID/secret fields
+- `api/app/main.py` — 3 new routers registered
+- `api/pyproject.toml` — pillow, aiofiles, cryptography
+- `api/Dockerfile` — ffmpeg added
+- `src/stores/mediaStore.ts` — Zustand media + storage provider store
+- `src/stores/playlistStore.ts` — Zustand playlist store
+- `src/pages/MediaPage.tsx` — Media Library UI (grid/list, storage browser, detail panel)
+- `src/pages/PlaylistBuilderPage.tsx` — Playlist Builder UI (drag reorder, media picker, settings)
+- `src/App.tsx` — added /media and /playlists routes
+**Summary:** Full Phase 2 implementation: 3 storage adapters (Dropbox v2, Google Drive v3, OneDrive Graph API) with Fernet credential encryption, background media processing (Pillow images + ffprobe/ffmpeg videos), playlist CRUD with drag-reorder, and complete React frontend for Media Library and Playlist Builder. TypeScript compiles clean (0 errors).
+
+---
+
+<!-- Session 2 below -->
+
 ## Session 2 — Phase 1: Backend review + React frontend scaffold
 
 ### Branch: `main`
