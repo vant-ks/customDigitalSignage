@@ -16,6 +16,16 @@
         "git rm": true,
         "git remote": true,
         "git push": true,
-        "\"/Users/kevin/GJS": true
+        "\"/Users/kevin/GJS": true,
+        "psql": true,
+        ".venv/bin/alembic": true,
+        "lsof": true,
+        "brew": true,
+        "pg_isready": true,
+        "/usr/local/opt/postgresql@14/bin/pg_isready": true,
+        "/usr/local/opt/postgresql@14/bin/postgres": true,
+        "/opt/homebrew/opt/postgresql@14/bin/postgres": true,
+        "/usr/local/opt/postgresql@14/bin/pg_ctl": true,
+        "pg_ctl": true
     }
 }

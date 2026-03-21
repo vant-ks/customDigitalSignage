@@ -37,6 +37,138 @@ THUMBNAIL_MAX_H = 180
 # ─── Public entry point ──────────────────────────────────────────────────────
 
 
+async def process_local_asset(
+    asset_id: str,
+    local_path: str,
+    file_type: str,
+) -> None:
+    """
+    Background task for directly-uploaded (local) media assets.
+    Processes from the local filesystem instead of downloading from a cloud provider.
+    """
+    THUMBNAIL_DIR.mkdir(parents=True, exist_ok=True)
+
+    async with async_session_factory() as db:
+        result = await db.execute(select(MediaAsset).where(MediaAsset.id == asset_id))
+        asset = result.scalar_one_or_none()
+        if not asset:
+            logger.error("process_local_asset: asset %s not found", asset_id)
+            return
+        asset.processing_status = "processing"
+        await db.commit()
+
+    try:
+        updates: dict = {}
+        if file_type == "image":
+            updates = await _process_local_image(asset_id, local_path)
+        elif file_type == "video":
+            updates = await _process_local_video(asset_id, local_path)
+
+        async with async_session_factory() as db:
+            result = await db.execute(select(MediaAsset).where(MediaAsset.id == asset_id))
+            asset = result.scalar_one_or_none()
+            if asset:
+                for k, v in updates.items():
+                    setattr(asset, k, v)
+                asset.processing_status = "ready"
+                await db.commit()
+
+        logger.info("Local asset %s processed successfully", asset_id)
+
+    except Exception as exc:
+        logger.exception("Processing failed for local asset %s: %s", asset_id, exc)
+        async with async_session_factory() as db:
+            result = await db.execute(select(MediaAsset).where(MediaAsset.id == asset_id))
+            asset = result.scalar_one_or_none()
+            if asset:
+                asset.processing_status = "error"
+                asset.processing_error = str(exc)[:500]
+                await db.commit()
+
+
+async def _process_local_image(asset_id: str, local_path: str) -> dict:
+    """Process a locally stored image: extract dimensions, generate thumbnail."""
+    path = Path(local_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Local file not found: {local_path}")
+
+    with Image.open(local_path) as img:
+        width, height = img.size
+        mime_type = Image.MIME.get(img.format or "", None)
+
+        thumb = img.copy()
+        thumb.thumbnail((THUMBNAIL_MAX_W, THUMBNAIL_MAX_H), Image.LANCZOS)
+        thumb_path = THUMBNAIL_DIR / f"{asset_id}.jpg"
+        thumb.convert("RGB").save(str(thumb_path), "JPEG", quality=80, optimize=True)
+
+    return {
+        "width": width,
+        "height": height,
+        "mime_type": mime_type,
+        "thumbnail_url": f"/api/media/{asset_id}/thumbnail",
+    }
+
+
+async def _process_local_video(asset_id: str, local_path: str) -> dict:
+    """Run ffprobe + ffmpeg on a locally stored video file."""
+    updates: dict = {}
+
+    probe_proc = await asyncio.create_subprocess_exec(
+        "ffprobe",
+        "-v", "quiet",
+        "-print_format", "json",
+        "-show_streams",
+        "-show_format",
+        local_path,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    try:
+        stdout, _ = await asyncio.wait_for(probe_proc.communicate(), timeout=30)
+    except asyncio.TimeoutError:
+        logger.warning("ffprobe timed out for local asset %s", asset_id)
+        return updates
+
+    if probe_proc.returncode == 0:
+        probe = json.loads(stdout.decode())
+        for stream in probe.get("streams", []):
+            if stream.get("codec_type") == "video":
+                updates["width"] = stream.get("width")
+                updates["height"] = stream.get("height")
+                updates["codec"] = stream.get("codec_name")
+                rfr = stream.get("r_frame_rate", "0/1")
+                try:
+                    num, den = map(int, rfr.split("/"))
+                    updates["framerate"] = round(num / den, 3) if den else None
+                except (ValueError, ZeroDivisionError):
+                    pass
+                break
+        fmt = probe.get("format", {})
+        if fmt.get("duration"):
+            updates["duration_sec"] = float(fmt["duration"])
+
+    thumb_path = THUMBNAIL_DIR / f"{asset_id}.jpg"
+    thumb_proc = await asyncio.create_subprocess_exec(
+        "ffmpeg",
+        "-ss", "1",
+        "-i", local_path,
+        "-vframes", "1",
+        "-vf", f"scale={THUMBNAIL_MAX_W}:-1",
+        "-y",
+        str(thumb_path),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    try:
+        await asyncio.wait_for(thumb_proc.communicate(), timeout=60)
+        if thumb_path.exists():
+            updates["thumbnail_url"] = f"/api/media/{asset_id}/thumbnail"
+    except asyncio.TimeoutError:
+        logger.warning("Video thumbnail timed out for local asset %s", asset_id)
+
+    return updates
+
+
 async def process_media_asset(
     asset_id: str,
     provider_type: str,

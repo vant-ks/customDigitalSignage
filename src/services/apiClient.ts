@@ -67,11 +67,18 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const token = await getAccessToken()
 
+  // For multipart uploads the caller passes headers:{} to suppress Content-Type
+  // so the browser can set it with the correct boundary. Otherwise default to JSON.
+  const isMultipart = options.body instanceof FormData
+  const defaultHeaders: Record<string, string> = {
+    Authorization: `Bearer ${token}`,
+    ...(isMultipart ? {} : { 'Content-Type': 'application/json' }),
+  }
+
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      ...defaultHeaders,
       ...options.headers,
     },
   })
@@ -120,6 +127,9 @@ export const api = {
   patch: <T>(path: string, body: unknown) =>
     apiRequest<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
   delete: <T>(path: string) => apiRequest<T>(path, { method: 'DELETE' }),
+  /** Multipart upload — browser sets Content-Type with boundary automatically */
+  upload: <T>(path: string, formData: FormData) =>
+    apiRequest<T>(path, { method: 'POST', body: formData }),
 }
 
 export { ApiError }

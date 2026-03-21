@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     onedrive_client_id: str = ""
     onedrive_client_secret: str = ""
 
+    # ── Local media storage (for direct uploads) ─────────────────────────
+    local_media_dir: str = "/tmp/vant-media/uploads"
+
     # ── Frontend URL (used to build OAuth redirect URIs) ────────────────
     frontend_url: str = "http://localhost:3031"
 

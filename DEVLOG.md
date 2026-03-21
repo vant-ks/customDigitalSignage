@@ -37,7 +37,39 @@ When complete, update to:
 
 ---
 
-## Session 3 — Phase 2: Media Pipeline + Content Management
+## Session 4 — Direct Upload, Local Media Pipeline
+
+### Branch: `main`
+
+---
+
+### 1. Session start
+
+**Status:** ✅ COMPLETE
+**Tags:** session-start
+**Files changed:** `DEVLOG.md`
+**Summary:** Session initialized. API :3030 healthy, Vite :3031 200, git on main (HEAD dbd32cd). DB had 15 tables at head. Smoke-tested registration + login — both working.
+
+---
+
+### 2. Phase 2: direct file upload + local processor
+
+**Status:** ✅ COMPLETE
+**Tags:** feat, api, frontend, media
+**Commit:** (pending)
+**Files changed:**
+- `api/app/core/config.py` — added `local_media_dir` setting
+- `api/app/schemas/schemas.py` — added `local` to StorageProviderCreate pattern
+- `api/app/api/routes/media.py` — added `POST /api/media/upload` (multipart), `GET /api/media/{id}/file`, fixed background task commit-before-schedule bug for both upload and register_media_asset
+- `api/app/services/media_processor.py` — added `process_local_asset`, `_process_local_image`, `_process_local_video`
+- `src/services/apiClient.ts` — added `api.upload()` multipart helper, fixed Content-Type header logic for FormData
+- `src/stores/mediaStore.ts` — added `uploadAsset()` action
+- `src/pages/MediaPage.tsx` — added Upload button (file input → multipart post)
+**Summary:** Full direct-upload pipeline: multipart endpoint validates MIME (allowlist, extension fallback), saves to `/tmp/vant-media/uploads/{org_id}/`, commits to DB, then background-processes (Pillow thumbnail for images, ffprobe+ffmpeg for video). TypeScript 0 errors, Python syntax clean, end-to-end smoke test passed (status: ready, 100×100, thumbnail URL populated).
+
+---
+
+
 
 ### Branch: `main`
 
@@ -59,7 +91,7 @@ Phase 2 session start. Building storage provider OAuth adapters, media asset CRU
 
 **Status:** ✅ COMPLETE
 **Tags:** feat, api, frontend, media, playlists, auth
-**Commit:** (pending)
+**Commit:** dbd32cd
 **Files changed:**
 - `api/app/services/storage/` — new: `base.py`, `crypto.py`, `dropbox_adapter.py`, `gdrive_adapter.py`, `onedrive_adapter.py`, `factory.py`
 - `api/app/services/media_processor.py` — image + video processing, thumbnail generation (Pillow + ffprobe/ffmpeg)

@@ -1,14 +1,18 @@
 """
-Media Asset routes — register from cloud storage, list, update, delete,
-download URL, thumbnail serving, template preview.
+Media Asset routes — register from cloud storage, direct upload, list,
+update, delete, download URL, thumbnail serving, template preview.
 """
 
+import hashlib
 import math
+import mimetypes
+import uuid as _uuid_mod
 from pathlib import Path
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
+import aiofiles
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, Query, UploadFile, status
 from fastapi.responses import FileResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +27,7 @@ from app.schemas.schemas import (
     MediaAssetUpdate,
     PaginatedResponse,
 )
-from app.services.media_processor import process_media_asset
+from app.services.media_processor import process_local_asset, process_media_asset
 from app.services.storage.crypto import decrypt_credentials
 from app.services.storage.factory import create_adapter
 
@@ -31,6 +35,149 @@ router = APIRouter(prefix="/api/media", tags=["media"])
 settings = get_settings()
 
 THUMBNAIL_DIR = Path("/tmp/vant-media/thumbnails")
+
+# Allowed MIME prefixes / exact types for direct upload
+_ALLOWED_MIMES = {
+    "image/jpeg", "image/png", "image/gif", "image/webp",
+    "image/svg+xml", "image/bmp", "image/tiff",
+    "video/mp4", "video/webm", "video/quicktime", "video/x-msvideo",
+    "video/x-matroska", "video/mpeg",
+    "application/pdf",
+}
+_MAX_UPLOAD_BYTES = 512 * 1024 * 1024  # 512 MB hard limit
+
+
+async def _get_asset_or_404(asset_id: UUID, org_id: str, db: AsyncSession) -> MediaAsset:
+    result = await db.execute(
+        select(MediaAsset).where(
+            MediaAsset.id == asset_id,
+            MediaAsset.org_id == org_id,
+        )
+    )
+    asset = result.scalar_one_or_none()
+    if not asset:
+        raise HTTPException(status_code=404, detail="Media asset not found")
+    return asset
+
+
+# ─── Direct Upload ───────────────────────────────────────────────────────────
+
+@router.post("/upload", status_code=status.HTTP_201_CREATED)
+async def upload_media_file(
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user),
+    file: UploadFile = File(...),
+    name: Optional[str] = Form(None),
+    folder: str = Form("/"),
+    tags: str = Form(""),
+):
+    """
+    Direct file upload (multipart/form-data).
+    Stores the file locally and triggers background processing.
+    Supports images, videos, and PDFs up to 512 MB.
+    """
+    # ── Validate size ─────────────────────────────────────────────────────
+    content = await file.read(_MAX_UPLOAD_BYTES + 1)
+    if len(content) > _MAX_UPLOAD_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="File exceeds maximum allowed size of 512 MB",
+        )
+
+    # ── Validate MIME type (sniff from content, not client header) ───────
+    detected_mime: Optional[str] = None
+    try:
+        import magic  # type: ignore
+        detected_mime = magic.from_buffer(content[:2048], mime=True)
+    except ImportError:
+        suffix = Path(file.filename or "").suffix.lower()
+        detected_mime, _ = mimetypes.guess_type(f"file{suffix}")
+
+    mime = (detected_mime or file.content_type or "").split(";")[0].strip().lower()
+    if mime not in _ALLOWED_MIMES:
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail=f"Unsupported file type: {mime!r}. Allowed: images, videos, PDF",
+        )
+
+    # ── Determine file_type bucket ────────────────────────────────────────
+    if mime.startswith("image/"):
+        file_type = "image"
+    elif mime.startswith("video/"):
+        file_type = "video"
+    else:
+        file_type = "pdf"
+
+    # ── Save to disk ──────────────────────────────────────────────────────
+    asset_id = _uuid_mod.uuid4()
+    orig_suffix = Path(file.filename or "").suffix
+    suffix = orig_suffix if orig_suffix else (mimetypes.guess_extension(mime) or ".bin")
+    upload_dir = Path(settings.local_media_dir) / str(current_user.org_id)
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    dest = upload_dir / f"{asset_id}{suffix}"
+
+    async with aiofiles.open(dest, "wb") as f_out:
+        await f_out.write(content)
+
+    source_hash = hashlib.sha256(content).hexdigest()
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()] if tags else []
+    asset_name = name or Path(file.filename or str(asset_id)).stem
+
+    # ── Create DB record ──────────────────────────────────────────────────
+    asset = MediaAsset(
+        id=asset_id,
+        org_id=current_user.org_id,
+        storage_id=None,
+        name=asset_name,
+        file_type=file_type,
+        mime_type=mime,
+        file_size_bytes=len(content),
+        source_path=str(dest),
+        source_hash=source_hash,
+        folder=folder or "/",
+        tags=tag_list,
+        processing_status="pending",
+    )
+    db.add(asset)
+    await db.flush()
+    await db.refresh(asset)
+    # Commit NOW so the background task can find the record in a new session
+    await db.commit()
+
+    if file_type in ("image", "video"):
+        background_tasks.add_task(
+            process_local_asset,
+            asset_id=str(asset_id),
+            local_path=str(dest),
+            file_type=file_type,
+        )
+    else:
+        asset.processing_status = "ready"
+        await db.flush()
+
+    return MediaAssetResponse.model_validate(asset)
+
+
+# ─── Serve locally uploaded file ─────────────────────────────────────────────
+
+@router.get("/{asset_id}/file")
+async def serve_local_file(
+    asset_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user),
+):
+    """Serve a locally stored (directly uploaded) media file."""
+    asset = await _get_asset_or_404(asset_id, current_user.org_id, db)
+    if asset.storage_id is not None:
+        raise HTTPException(status_code=400, detail="Use /download-url for cloud-stored assets")
+    if not asset.source_path or not Path(asset.source_path).exists():
+        raise HTTPException(status_code=404, detail="File not available locally")
+    return FileResponse(
+        asset.source_path,
+        media_type=asset.mime_type or "application/octet-stream",
+        filename=Path(asset.source_path).name,
+    )
 
 
 # ─── CRUD ────────────────────────────────────────────────────────────────────
@@ -73,6 +220,8 @@ async def register_media_asset(
     db.add(asset)
     await db.flush()
     await db.refresh(asset)
+    # Commit before background task so it can find the record in its own session
+    await db.commit()
 
     if body.file_type in ("image", "video"):
         # Snapshot credentials now — the background task runs after the session closes
@@ -251,18 +400,3 @@ async def preview_template(
     return HTMLResponse(content=template_html)
 
 
-# ─── Helpers ─────────────────────────────────────────────────────────────────
-
-async def _get_asset_or_404(
-    asset_id: UUID, org_id: UUID, db: AsyncSession
-) -> MediaAsset:
-    result = await db.execute(
-        select(MediaAsset).where(
-            MediaAsset.id == asset_id,
-            MediaAsset.org_id == org_id,
-        )
-    )
-    asset = result.scalar_one_or_none()
-    if not asset:
-        raise HTTPException(status_code=404, detail="Media asset not found")
-    return asset

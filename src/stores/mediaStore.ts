@@ -57,6 +57,7 @@ interface MediaActions {
     folder?: string
     tags?: string[]
   }) => Promise<MediaAsset>
+  uploadAsset: (file: File, opts?: { name?: string; folder?: string; tags?: string[] }) => Promise<MediaAsset>
   updateAsset: (id: string, data: Partial<Pick<MediaAsset, 'name' | 'folder' | 'tags' | 'template_data'>>) => Promise<void>
   deleteAsset: (id: string) => Promise<void>
   getDownloadUrl: (id: string) => Promise<string>
@@ -111,6 +112,17 @@ export const useMediaStore = create<MediaState & MediaActions>((set) => ({
 
   registerAsset: async (data) => {
     const asset = await api.post<MediaAsset>('/api/media', data)
+    set((s) => ({ assets: [asset, ...s.assets], total: s.total + 1 }))
+    return asset
+  },
+
+  uploadAsset: async (file, opts = {}) => {
+    const form = new FormData()
+    form.append('file', file)
+    if (opts.name) form.append('name', opts.name)
+    if (opts.folder) form.append('folder', opts.folder)
+    if (opts.tags?.length) form.append('tags', opts.tags.join(','))
+    const asset = await api.upload<MediaAsset>('/api/media/upload', form)
     set((s) => ({ assets: [asset, ...s.assets], total: s.total + 1 }))
     return asset
   },

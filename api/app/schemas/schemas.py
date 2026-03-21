@@ -312,7 +312,7 @@ class StorageProviderResponse(BaseModel):
 
 
 class StorageProviderCreate(BaseModel):
-    provider_type: str = Field(pattern=r"^(dropbox|gdrive|onedrive)$")
+    provider_type: str = Field(pattern=r"^(dropbox|gdrive|onedrive|local)$")
     label: str = Field(min_length=1, max_length=255)
     root_folder: Optional[str] = None
 

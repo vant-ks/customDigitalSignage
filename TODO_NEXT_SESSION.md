@@ -7,38 +7,41 @@
 
 ## 🔴 High Priority (do first)
 
-1. **Connect to Railway PostgreSQL** — set `DATABASE_URL` in `api/.env`, run `alembic upgrade head`, verify tables created
-2. **Smoke-test the API** — start uvicorn (port 3030), hit `/health`, test `POST /api/auth/register` + `/login`
-3. **Smoke-test the frontend** — `npm run dev` (port 3031), verify login page renders, confirm API proxy works
+1. **Push to Railway** — create Railway service, link PostgreSQL, set env vars (`DATABASE_URL`, `SECRET_KEY`, OAuth IDs), push `main`, run `alembic upgrade head`, verify `/health`
+2. **Local media persistence** — `/tmp` is ephemeral on Railway; add `MEDIA_DIR` env var pointing to a Railway volume mount and update `local_media_dir` in config
 
 ---
 
 ## 🟡 Next Up
 
-4. **Phase 2: Media Library API** — `GET/POST /api/media`, storage provider integration (S3/Backblaze/local), file upload with presigned URLs
-5. **Phase 2: Media page (frontend)** — Grid/list view, upload modal, folder tree, preview panel
-6. **Push to Railway** — create Railway service, set env vars, configure auto-deploy from `main`
+3. **Phase 3: Schedules** — `GET/POST /api/schedules`, time-based playlist assignment, weekly schedule grid UI
+4. **Display Agent (Phase 4)** — heartbeat endpoint already exists; build minimal Python agent for Raspberry Pi that sends heartbeats and polls for current playlist
+5. **Provisioning flow** — `POST /api/provisioning/token` + agent installer script
 
 ---
 
 ## 🟢 Backlog
 
-- Phase 3: Playlists — CRUD, drag-and-drop ordering, playlist builder UI
-- Phase 3: Schedules — time-based playlist assignment, weekly schedule grid UI
-- Phase 4: Display Agent (Python/Electron) — heartbeat, telemetry, content playback
-- Phase 5: Provisioning — token generation, agent installer script
-- Phase 6: Monitoring, alerts, audit log UI
+- Phase 5: Alerts + notification rules
+- Phase 6: Audit log UI, screenshots from devices
+- Storage OAuth callbacks (Dropbox/GDrive/OneDrive) — need real OAuth creds to test end-to-end
 
 ---
 
 ## ⚠️ Known Issues / Blockers
 
-- Railway URL not yet assigned — update `LAUNCH_SESSION.md` and `docs/SESSION_START_PROTOCOL.md` once linked
-- API directory structure TBD — decide between monorepo vs separate repos before scaffolding
-- Port 3031 not confirmed available — run `lsof -i :3031` to verify before starting Vite
+- `/tmp/vant-media/` used for uploads + thumbnails — ephemeral on Railway, needs volume
+- `SECRET_KEY` in `api/.env` is still the placeholder — must rotate before production
+- `CORS_ORIGINS` needs Railway frontend URL once deployed
 
 ---
 
-## ✅ Done This Sprint
+## ✅ Done This Sprint (Session 4)
 
-- Documentation scaffold initialized (March 18, 2026)
+- Session start: all services up, migrations at head, auth smoke-tested ✓
+- `POST /api/media/upload` — multipart upload, MIME allowlist, local disk storage ✓
+- `GET /api/media/{id}/file` — serve locally stored files ✓
+- `process_local_asset` — Pillow image processing + ffprobe/ffmpeg video processing ✓
+- Fixed background task race: explicit `db.commit()` before `background_tasks.add_task()` ✓
+- Frontend: `api.upload()` helper, `uploadAsset()` store action, Upload button in MediaPage ✓
+- TypeScript 0 errors, Python syntax clean ✓

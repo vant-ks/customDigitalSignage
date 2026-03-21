@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   Image,
   Video,
@@ -539,6 +539,7 @@ export default function MediaPage() {
     fetchAssets,
     fetchProviders,
     deleteAsset,
+    uploadAsset,
   } = useMediaStore()
 
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -548,6 +549,7 @@ export default function MediaPage() {
   const [browsing, setBrowsing] = useState<StorageProvider | null>(null)
   const [connectOpen, setConnectOpen] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     fetchAssets()
@@ -558,6 +560,22 @@ export default function MediaPage() {
   const refresh = useCallback(() => {
     fetchAssets({ search, file_type: fileTypeFilter || undefined })
   }, [fetchAssets, search, fileTypeFilter])
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    setUploading(true)
+    try {
+      for (const file of Array.from(files)) {
+        await uploadAsset(file)
+      }
+    } catch (err) {
+      console.error('Upload failed:', err)
+    } finally {
+      setUploading(false)
+      e.target.value = ''  // reset so the same file can be re-selected
+    }
+  }
 
   useEffect(() => {
     const timer = setTimeout(refresh, 300)
@@ -650,6 +668,20 @@ export default function MediaPage() {
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
+
+          {/* Direct file upload */}
+          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-[13px] font-medium cursor-pointer transition-colors">
+            {uploading ? <Loader size={14} className="animate-spin" /> : <Plus size={14} />}
+            {uploading ? 'Uploading…' : 'Upload'}
+            <input
+              type="file"
+              className="hidden"
+              multiple
+              accept="image/*,video/*,application/pdf"
+              onChange={handleFileUpload}
+              disabled={uploading}
+            />
+          </label>
 
           {/* Import from storage */}
           {providers.length > 0 ? (
