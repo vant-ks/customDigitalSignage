@@ -7,7 +7,11 @@
 
 ## 🔴 High Priority (do first)
 
-1. **Push to Railway** — create Railway service, link PostgreSQL, set env vars (`DATABASE_URL`, `SECRET_KEY`, OAuth IDs), push `main`, run `alembic upgrade head`, verify `/health`
+1. **Fix Railway static CDN override (dashboard required):**
+   - Open Railway dashboard → customDigitalSignage service → Settings → Source
+   - Set **Root Directory** to `/api`
+   - Trigger a new deploy — this clears the old Vite static cache from Railway's edge CDN and routes traffic to uvicorn
+   - After fix: `curl https://customdigitalsignage-production.up.railway.app/health` should return `{"status": "healthy"}`
 2. **Local media persistence** — `/tmp` is ephemeral on Railway; add `MEDIA_DIR` env var pointing to a Railway volume mount and update `local_media_dir` in config
 
 ---
