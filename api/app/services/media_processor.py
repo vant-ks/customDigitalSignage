@@ -3,7 +3,7 @@ Background media processing pipeline.
 
 - Images: Pillow resize/optimize, extract dimensions, generate 320×180 JPEG thumbnail
 - Videos: ffprobe for metadata (no download), ffmpeg for 1-frame thumbnail
-- Thumbnails live in /tmp/vant-media/thumbnails/ and are served via GET /api/media/{id}/thumbnail
+- Thumbnails live in settings.thumbnail_dir and are served via GET /api/media/{id}/thumbnail
 - Processed URL = original source URL (full transcode deferred to Phase 4/deployment)
 """
 
@@ -29,7 +29,7 @@ from sqlalchemy import select
 logger = logging.getLogger("vant.processor")
 settings = get_settings()
 
-THUMBNAIL_DIR = Path("/tmp/vant-media/thumbnails")
+THUMBNAIL_DIR = Path(settings.thumbnail_dir)
 THUMBNAIL_MAX_W = 320
 THUMBNAIL_MAX_H = 180
 
