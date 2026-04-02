@@ -37,6 +37,17 @@ When complete, update to:
 
 ---
 
+## Session 5 — [Date: 2026-03-31]
+
+### 1. Session start
+
+**Status:** ✅ COMPLETE
+**Tags:** session-start
+**Files changed:** `DEVLOG.md`, `docs/SESSION_JOURNAL.md`
+**Summary:** Session initialized. API :3030 healthy, Vite :3031 200, git on main (HEAD 1628910, up to date with origin/main). Unstaged: .vscode/settings.json, api/Dockerfile, api/railway.toml, docs/PROJECT_RULES.md. Untracked: api/start.sh.
+
+---
+
 ## Session 4 — Direct Upload, Local Media Pipeline
 
 ### Branch: `main`
@@ -69,12 +80,40 @@ When complete, update to:
 
 ---
 
+### 3. Persistent media storage — Railway volume + alembic startup fix
 
+**Status:** ✅ COMPLETE
+**Tags:** fix, railway, deployment, media
+**Commits:** 7341a16, 808682a, fd02332, e95a90f, 5680c8a
+**Files changed:**
+- `api/app/core/config.py` — added `thumbnail_dir` setting
+- `api/app/services/media_processor.py` — `THUMBNAIL_DIR` pulled from settings (was hardcoded `/tmp`)
+- `api/start.sh` — proper startup script with alembic timeout + stdout/stderr diagnostics
+- `api/Dockerfile` — fixed editable install order (tomllib-extract deps → COPY . . → pip install --no-deps -e .); `ENV PYTHONPATH=/app`
+- `api/railway.toml` — added explicit `startCommand = "./start.sh"` to override Railway's cached inline startCommand
+**Railway env vars set:** `LOCAL_MEDIA_DIR=/data/uploads`, `THUMBNAIL_DIR=/data/thumbnails`
+**Railway volume:** created and mounted at `/data`
+**Summary:** Diagnosed and fixed 3 layered problems: (1) editable pip install before COPY broke `import app` in alembic; (2) Railway had cached an old inline startCommand overriding our Dockerfile CMD; (3) `/tmp` media paths replaced with persistent volume paths. Service confirmed healthy at `customdigitalsignage-api-production.up.railway.app/health`.
 
-### Branch: `main`
+---
 
-### Overview
-Phase 2 session start. Building storage provider OAuth adapters, media asset CRUD, background processing pipeline (ffmpeg/Pillow), playlist CRUD, and frontend Media Library + Playlist Builder pages.
+### 4. Phase 3: Scheduling + Sync Engine
+
+**Status:** ✅ COMPLETE
+**Tags:** feat, api, frontend, schedules
+**Commit:** (pending — this session)
+**Files changed:**
+- `api/app/schemas/schemas.py` — added `ScheduleCreate`, `ScheduleUpdate`, `ScheduleResponse`, `ScheduleOverrideRequest`, `ManifestMediaItemSchema`, `ManifestPlaylistItemSchema`, `ManifestPlaylistSchema`, `ManifestScheduleEntrySchema`, `ContentManifestResponse`, `SyncStatusRequest`
+- `api/app/api/routes/schedules.py` — NEW: full CRUD + active-schedule resolver + emergency override + content manifest + sync-status endpoint
+- `api/app/main.py` — registered `schedules_router`
+- `src/stores/scheduleStore.ts` — NEW: Zustand store (fetchSchedules, createSchedule, updateSchedule, deleteSchedule, createOverride)
+- `src/pages/SchedulesPage.tsx` — NEW: weekly calendar grid UI, create dialog, emergency override dialog, schedule list table
+- `src/App.tsx` — added `/schedules` route
+**Summary:** Full Phase 3 implementation: 9 new API endpoints (schedule CRUD, resolver with is_override/priority/specificity sort, emergency override with WS push, SHA-256 content manifest, device sync-status), Zustand store, and weekly calendar UI with day-column grid, per-type color coding, and emergency override banner. Python import verified OK, TypeScript 0 errors.
+
+---
+
+ Building storage provider OAuth adapters, media asset CRUD, background processing pipeline (ffmpeg/Pillow), playlist CRUD, and frontend Media Library + Playlist Builder pages.
 
 ---
 

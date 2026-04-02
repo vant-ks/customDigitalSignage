@@ -449,6 +449,140 @@ class PlaylistResponse(BaseModel):
         return sum(i.duration_sec for i in self.items)
 
 
+# ─── Schedules ────────────────────────────────────────────────────────────────
+
+
+class ScheduleCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+    description: Optional[str] = None
+    display_id: Optional[UUID] = None
+    group_id: Optional[UUID] = None
+    playlist_id: UUID
+    schedule_type: str = Field(default="always", pattern=r"^(always|recurring|one_time)$")
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    start_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}(:\d{2})?$")  # HH:MM or HH:MM:SS
+    end_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}(:\d{2})?$")
+    days_of_week: list[int] = Field(default_factory=lambda: [0, 1, 2, 3, 4, 5, 6])
+    priority: int = Field(default=0, ge=0, le=100)
+    is_override: bool = False
+    is_active: bool = True
+
+
+class ScheduleUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = None
+    display_id: Optional[UUID] = None
+    group_id: Optional[UUID] = None
+    playlist_id: Optional[UUID] = None
+    schedule_type: Optional[str] = Field(None, pattern=r"^(always|recurring|one_time)$")
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    start_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}(:\d{2})?$")
+    end_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}(:\d{2})?$")
+    days_of_week: Optional[list[int]] = None
+    priority: Optional[int] = Field(None, ge=0, le=100)
+    is_override: Optional[bool] = None
+    is_active: Optional[bool] = None
+
+
+class ScheduleResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    org_id: UUID
+    name: str
+    description: Optional[str] = None
+    display_id: Optional[UUID] = None
+    group_id: Optional[UUID] = None
+    playlist_id: UUID
+    schedule_type: str
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    days_of_week: list[int]
+    priority: int
+    is_override: bool
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class ScheduleOverrideRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+    playlist_id: UUID
+    display_id: Optional[UUID] = None
+    group_id: Optional[UUID] = None
+    priority: int = Field(default=99, ge=0, le=100)
+    auto_expire_minutes: Optional[int] = Field(None, ge=1, le=1440)
+
+
+# ─── Content Manifest (for display agents) ───────────────────────────────────
+
+
+class ManifestMediaItemSchema(BaseModel):
+    id: str
+    name: str
+    file_type: str
+    source_url: str
+    source_hash: Optional[str] = None
+    file_size_bytes: Optional[int] = None
+    duration_sec: Optional[float] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+
+class ManifestPlaylistItemSchema(BaseModel):
+    id: str
+    media: ManifestMediaItemSchema
+    position: int
+    duration_sec: int
+    transition_type: str
+    transition_ms: int
+
+
+class ManifestPlaylistSchema(BaseModel):
+    id: str
+    name: str
+    play_mode: str
+    items: list[ManifestPlaylistItemSchema]
+
+
+class ManifestScheduleEntrySchema(BaseModel):
+    id: str
+    playlist: ManifestPlaylistSchema
+    schedule_type: str
+    days_of_week: list[int]
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    priority: int
+    is_override: bool
+
+
+class ContentManifestResponse(BaseModel):
+    display_id: str
+    manifest_hash: str
+    generated_at: datetime
+    cache_policy: dict
+    schedules: list[ManifestScheduleEntrySchema]
+    fallback_playlist: Optional[ManifestPlaylistSchema] = None
+
+
+# ─── Sync Status ──────────────────────────────────────────────────────────────
+
+
+class SyncStatusRequest(BaseModel):
+    manifest_hash: Optional[str] = None
+    cache_used_gb: Optional[float] = None
+    cached_item_count: Optional[int] = None
+    last_sync_at: Optional[datetime] = None
+    sync_status: str = Field(default="ok", pattern=r"^(ok|error|syncing)$")
+    sync_error: Optional[str] = None
+
+
 class PlaylistReorderRequest(BaseModel):
     order: list[UUID]  # ordered list of PlaylistItem IDs
 

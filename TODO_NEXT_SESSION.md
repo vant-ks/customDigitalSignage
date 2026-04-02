@@ -7,20 +7,22 @@
 
 ## 🔴 High Priority (do first)
 
-1. **Fix Railway static CDN override (dashboard required):**
-   - Open Railway dashboard → customDigitalSignage service → Settings → Source
-   - Set **Root Directory** to `/api`
-   - Trigger a new deploy — this clears the old Vite static cache from Railway's edge CDN and routes traffic to uvicorn
-   - After fix: `curl https://customdigitalsignage-production.up.railway.app/health` should return `{"status": "healthy"}`
-2. **Local media persistence** — `/tmp` is ephemeral on Railway; add `MEDIA_DIR` env var pointing to a Railway volume mount and update `local_media_dir` in config
+1. **Phase 4: Display Agent (Raspberry Pi)** — minimal Python service that:
+   - Sends heartbeat `POST /api/devices/{id}/heartbeat`
+   - Polls `GET /api/displays/{id}/manifest` and computes local hash to detect changes
+   - Downloads and caches media files to local disk
+   - Launches `mpv` in kiosk mode to play the current playlist
+   - Reports sync status via `POST /api/devices/{id}/sync-status`
 
 ---
 
 ## 🟡 Next Up
 
-3. **Phase 3: Schedules** — `GET/POST /api/schedules`, time-based playlist assignment, weekly schedule grid UI
-4. **Display Agent (Phase 4)** — heartbeat endpoint already exists; build minimal Python agent for Raspberry Pi that sends heartbeats and polls for current playlist
-5. **Provisioning flow** — `POST /api/provisioning/token` + agent installer script
+2. **Provisioning flow** — `POST /api/provisioning/token` route + installer shell script that:
+   - Downloads the agent
+   - Sets device token in env
+   - Registers the display via API on first boot
+3. **Railway deploy of Phase 3** — git push triggers Railway autodeploy; verify schedules endpoints healthy on Railway after push
 
 ---
 
@@ -34,18 +36,19 @@
 
 ## ⚠️ Known Issues / Blockers
 
-- `/tmp/vant-media/` used for uploads + thumbnails — ephemeral on Railway, needs volume
 - `SECRET_KEY` in `api/.env` is still the placeholder — must rotate before production
-- `CORS_ORIGINS` needs Railway frontend URL once deployed
 
 ---
 
-## ✅ Done This Sprint (Session 4)
+## ✅ Done This Sprint (Session 5)
 
-- Session start: all services up, migrations at head, auth smoke-tested ✓
-- `POST /api/media/upload` — multipart upload, MIME allowlist, local disk storage ✓
-- `GET /api/media/{id}/file` — serve locally stored files ✓
-- `process_local_asset` — Pillow image processing + ffprobe/ffmpeg video processing ✓
-- Fixed background task race: explicit `db.commit()` before `background_tasks.add_task()` ✓
-- Frontend: `api.upload()` helper, `uploadAsset()` store action, Upload button in MediaPage ✓
-- TypeScript 0 errors, Python syntax clean ✓
+- Session start: all services up, migrations at head, git verified ✓
+- Railway volume mounted at `/data`; `/tmp` ephemeral storage issue resolved ✓
+- `thumbnail_dir` config-driven; `THUMBNAIL_DIR=/data/thumbnails` set in Railway ✓
+- Dockerfile editable install race condition fixed (tomllib dep extraction pattern) ✓
+- Railway cached `startCommand` override fixed via explicit `startCommand = "./start.sh"` in railway.toml ✓
+- CDN: `customDigitalSignage` frontend service redeployed with latest Vite build ✓
+- Phase 3 backend: all schemas, CRUD routes, resolver, emergency override, manifest, sync-status ✓
+- Phase 3 frontend: `scheduleStore.ts`, `SchedulesPage.tsx`, `/schedules` route wired ✓
+- TypeScript 0 errors, Python import verified ✓
+

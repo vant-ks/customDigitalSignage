@@ -5,6 +5,7 @@ import DisplaysPage from './pages/DisplaysPage'
 import LoginPage from './pages/LoginPage'
 import MediaPage from './pages/MediaPage'
 import PlaylistBuilderPage from './pages/PlaylistBuilderPage'
+import SchedulesPage from './pages/SchedulesPage'
 
 function PrivateRoute() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/displays" element={<DisplaysPage />} />
           <Route path="/media" element={<MediaPage />} />
           <Route path="/playlists" element={<PlaylistBuilderPage />} />
+          <Route path="/schedules" element={<SchedulesPage />} />
         </Route>
       </Route>
     </Routes>
