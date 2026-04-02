@@ -97,6 +97,31 @@ When complete, update to:
 
 ---
 
+### 5. Phase 4: Display Agent
+
+**Status:** ✅ COMPLETE
+**Tags:** feat, agent, playback
+**Commit:** (pending — this session)
+**Files changed:** `agent/` (new directory — 21 files)
+- `agent/pyproject.toml` — pip-installable package `vant-agent`
+- `agent/vant_agent/core/config.py` — YAML config with save-back after registration
+- `agent/vant_agent/core/api_client.py` — httpx client with X-Device-Token auth
+- `agent/vant_agent/sync/manifest.py` — manifest cache, diff, media enumeration
+- `agent/vant_agent/sync/downloader.py` — download queue, SHA-256 verify, LRU eviction
+- `agent/vant_agent/playback/scheduler.py` — local schedule resolver (mirrors server logic)
+- `agent/vant_agent/playback/player.py` — mpv IPC + Chromium kiosk launcher
+- `agent/vant_agent/telemetry/collector.py` — psutil + platform-specific CPU temp
+- `agent/vant_agent/commands/handler.py` — WS command dispatcher (reboot, restart, sync, screenshot, config)
+- `agent/vant_agent/agent.py` — main orchestrator: 5 concurrent asyncio tasks
+- `agent/vant_agent/__main__.py` — CLI (run / register / status)
+- `agent/install/vant-agent.service` — systemd unit
+- `agent/install/com.vant.agent.plist` — macOS launchd plist
+- `agent/install/kiosk-session.sh` — X11 kiosk session script
+- `agent/install/config.example.yaml` — annotated config template
+**Summary:** Complete display agent: registration via provisioning token, 30s heartbeats, 5min manifest sync with SHA-256 verification + LRU cache eviction, local schedule resolver, mpv IPC playback for images/video + Chromium kiosk for HTML/URLs, psutil telemetry, WebSocket command handling, systemd/launchd service files. All Python syntax verified clean.
+
+---
+
 ### 4. Phase 3: Scheduling + Sync Engine
 
 **Status:** ✅ COMPLETE

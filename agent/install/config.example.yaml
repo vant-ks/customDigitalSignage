@@ -1,0 +1,28 @@
+# VANT Signage Agent — example configuration
+# Copy to /etc/vant-agent/config.yaml and edit.
+# After first boot registration, device_token and display_id are written automatically.
+
+# ── Required ──────────────────────────────────────────────────────────────────
+server_url: https://customdigitalsignage-api-production.up.railway.app
+
+# ── First-boot only (remove after registration) ───────────────────────────────
+# provisioning_token: vprov_REPLACE_WITH_TOKEN_FROM_DASHBOARD
+
+# ── Written by agent after registration (do not edit) ─────────────────────────
+# device_token: vdt_xxx
+# display_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+# ── Storage ───────────────────────────────────────────────────────────────────
+cache_dir: /var/cache/vant-agent
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+log_level: info          # debug | info | warning | error
+# log_file: /var/log/vant-agent.log
+
+# ── Timing ───────────────────────────────────────────────────────────────────
+manifest_interval: 300   # seconds between manifest checks (default 5 min)
+heartbeat_interval: 30   # seconds between heartbeats
+telemetry_interval: 60   # seconds between telemetry reports
+
+# ── Playback ─────────────────────────────────────────────────────────────────
+mpv_ipc_socket: /tmp/vant-mpv.sock

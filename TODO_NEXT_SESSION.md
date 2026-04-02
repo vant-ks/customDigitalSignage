@@ -7,22 +7,24 @@
 
 ## 🔴 High Priority (do first)
 
-1. **Phase 4: Display Agent (Raspberry Pi)** — minimal Python service that:
-   - Sends heartbeat `POST /api/devices/{id}/heartbeat`
-   - Polls `GET /api/displays/{id}/manifest` and computes local hash to detect changes
-   - Downloads and caches media files to local disk
-   - Launches `mpv` in kiosk mode to play the current playlist
-   - Reports sync status via `POST /api/devices/{id}/sync-status`
+1. **Phase 5: Provisioning Wizard (Dashboard UI)** — multi-step wizard:
+   - Steps: name/group/location → hardware type → display config → cache policy → generate token
+   - Output: provisioning token + downloadable `config.yaml` pre-filled with token + server URL
+   - Backend: `GET /api/provisioning/tokens` (list) endpoints already exist; add token download endpoint
+
+2. **Pi image builder script** — shell script that:
+   - Takes base Raspberry Pi OS Lite (Bookworm) image
+   - Installs `vant-agent` (from the `agent/` package), systemd service, mpv, Chromium
+   - Drops `kiosk-session.sh` as the auto-login session
+   - Output: ready-to-flash `.img`
 
 ---
 
 ## 🟡 Next Up
 
-2. **Provisioning flow** — `POST /api/provisioning/token` route + installer shell script that:
-   - Downloads the agent
-   - Sets device token in env
-   - Registers the display via API on first boot
-3. **Railway deploy of Phase 3** — git push triggers Railway autodeploy; verify schedules endpoints healthy on Railway after push
+3. **Linux (NUC/x86) one-line installer** — `curl ... | bash -s -- --token <PROVISIONING_TOKEN>`
+4. **Railway deploy verification** — confirm Phase 3 schedules endpoints are live on Railway after the Phase 3 push
+5. **Agent smoke test** — run `vant-agent register --token vprov_xxx` against local API, verify config.yaml write-back
 
 ---
 
@@ -50,5 +52,6 @@
 - CDN: `customDigitalSignage` frontend service redeployed with latest Vite build ✓
 - Phase 3 backend: all schemas, CRUD routes, resolver, emergency override, manifest, sync-status ✓
 - Phase 3 frontend: `scheduleStore.ts`, `SchedulesPage.tsx`, `/schedules` route wired ✓
-- TypeScript 0 errors, Python import verified ✓
+- Phase 4: complete display agent (`agent/` package — 21 files) ✓
+- TypeScript 0 errors, Python syntax verified ✓
 
