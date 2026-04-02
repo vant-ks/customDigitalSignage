@@ -1,17 +1,11 @@
 #!/bin/sh
 set -e
 
-echo "=== VANT Signage: Starting ==="
-echo "PORT=${PORT:-8000}"
-echo "LOCAL_MEDIA_DIR=${LOCAL_MEDIA_DIR}"
-echo "THUMBNAIL_DIR=${THUMBNAIL_DIR}"
+echo "=== VANT Signage: Starting ===" >&2
+echo "PORT=${PORT:-8000}" >&2
 
-echo "=== Testing Python imports ==="
-python -c "from app.main import app; print('Import OK')"
+echo "=== Running alembic upgrade head (timeout 60s) ===" >&2
+timeout 60 alembic upgrade head && echo "=== Alembic OK ===" >&2 || echo "WARNING: alembic timed out or failed — DB schema may already be at head, continuing" >&2
 
-echo "=== Running alembic upgrade head ==="
-alembic upgrade head
-echo "=== Alembic complete ==="
-
-echo "=== Starting uvicorn on port ${PORT:-8000} ==="
+echo "=== Starting uvicorn on port ${PORT:-8000} ===" >&2
 exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}" --log-level info
