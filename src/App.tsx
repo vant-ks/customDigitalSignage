@@ -5,6 +5,7 @@ import DisplaysPage from './pages/DisplaysPage'
 import LoginPage from './pages/LoginPage'
 import MediaPage from './pages/MediaPage'
 import PlaylistBuilderPage from './pages/PlaylistBuilderPage'
+import ProvisioningPage from './pages/ProvisioningPage'
 import SchedulesPage from './pages/SchedulesPage'
 
 function PrivateRoute() {
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/media" element={<MediaPage />} />
           <Route path="/playlists" element={<PlaylistBuilderPage />} />
           <Route path="/schedules" element={<SchedulesPage />} />
+          <Route path="/provisioning" element={<ProvisioningPage />} />
         </Route>
       </Route>
     </Routes>

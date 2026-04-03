@@ -48,6 +48,22 @@ When complete, update to:
 
 ---
 
+### 6. Phase 5: Provisioning Tools
+
+**Status:** ✅ COMPLETE
+**Tags:** feat, api, frontend, provisioning, agent
+**Commit:** (pending)
+**Files changed:**
+- `api/app/api/routes/devices.py` — added `GET /api/provisioning/tokens` (list, org-scoped, optional `?is_used` filter), `DELETE /api/provisioning/tokens/{id}` (revoke unused token), `GET /api/provisioning/tokens/{id}/config.yaml` (download pre-filled YAML config as attachment)
+- `src/stores/provisioningStore.ts` — NEW: Zustand store (fetchTokens, createToken, revokeToken, downloadConfig, clearCreatedToken)
+- `src/pages/ProvisioningPage.tsx` — NEW: 5-step wizard (Display Info → Hardware → Display Config → Cache Policy → Summary/Generate) + token history table with download/revoke actions
+- `src/App.tsx` — added `/provisioning` route
+- `src/components/layout/DashboardShell.tsx` — added Provisioning nav item (Cpu icon)
+- `agent/install/setup.sh` — NEW: Linux one-liner bootstrap (apt/dnf, Python venv, vant-agent install, systemd service, config write from --token + --server flags or --config file)
+**Summary:** Full provisioning workflow end-to-end: backend token list/revoke/config-download endpoints, 5-step React wizard in the dashboard, Zustand store, Linux bootstrap install script with systemd service. Dashboard users can generate tokens, download pre-filled config.yaml, and revoke unused tokens from the Token History table.
+
+---
+
 ## Session 4 — Direct Upload, Local Media Pipeline
 
 ### Branch: `main`

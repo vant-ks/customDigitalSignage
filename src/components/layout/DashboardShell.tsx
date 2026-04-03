@@ -4,6 +4,7 @@ import {
   Play,
   Image,
   Calendar,
+  Cpu,
   Settings,
   LogOut,
   Sun,
@@ -18,6 +19,7 @@ const NAV_ITEMS = [
   { label: 'Playlists', href: '/playlists', icon: Play },
   { label: 'Media', href: '/media', icon: Image },
   { label: 'Schedules', href: '/schedules', icon: Calendar },
+  { label: 'Provisioning', href: '/provisioning', icon: Cpu },
   { label: 'Settings', href: '/settings', icon: Settings },
 ]
 

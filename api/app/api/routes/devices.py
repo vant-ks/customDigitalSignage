@@ -8,7 +8,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -78,6 +79,111 @@ async def create_provisioning_token(
     db.add(token)
     await db.flush()
     return ProvisioningTokenResponse.model_validate(token)
+
+
+@router.get(
+    "/api/provisioning/tokens",
+    response_model=list[ProvisioningTokenResponse],
+    tags=["provisioning"],
+)
+async def list_provisioning_tokens(
+    is_used: Optional[bool] = None,
+    current_user: TokenData = Depends(require_role("admin", "manager")),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all provisioning tokens for the current user's org."""
+    stmt = select(ProvisioningToken).where(
+        ProvisioningToken.org_id == current_user.org_id
+    )
+    if is_used is not None:
+        stmt = stmt.where(ProvisioningToken.is_used == is_used)
+    stmt = stmt.order_by(ProvisioningToken.created_at.desc())
+    result = await db.execute(stmt)
+    tokens = result.scalars().all()
+    return [ProvisioningTokenResponse.model_validate(t) for t in tokens]
+
+
+@router.delete(
+    "/api/provisioning/tokens/{token_id}",
+    status_code=204,
+    tags=["provisioning"],
+)
+async def revoke_provisioning_token(
+    token_id: UUID,
+    current_user: TokenData = Depends(require_role("admin", "manager")),
+    db: AsyncSession = Depends(get_db),
+):
+    """Revoke (delete) an unused provisioning token."""
+    result = await db.execute(
+        select(ProvisioningToken).where(
+            ProvisioningToken.id == token_id,
+            ProvisioningToken.org_id == current_user.org_id,
+        )
+    )
+    token = result.scalar_one_or_none()
+    if not token:
+        raise HTTPException(status_code=404, detail="Token not found")
+    if token.is_used:
+        raise HTTPException(status_code=409, detail="Cannot revoke an already-used token")
+    await db.delete(token)
+
+
+@router.get(
+    "/api/provisioning/tokens/{token_id}/config.yaml",
+    tags=["provisioning"],
+    response_class=Response,
+)
+async def download_agent_config(
+    token_id: UUID,
+    request: Request,
+    current_user: TokenData = Depends(require_role("admin", "manager")),
+    db: AsyncSession = Depends(get_db),
+):
+    """Download a pre-filled agent config.yaml for the given provisioning token."""
+    result = await db.execute(
+        select(ProvisioningToken).where(
+            ProvisioningToken.id == token_id,
+            ProvisioningToken.org_id == current_user.org_id,
+        )
+    )
+    token = result.scalar_one_or_none()
+    if not token:
+        raise HTTPException(status_code=404, detail="Token not found")
+
+    # Derive public API base URL from incoming request
+    base = str(request.base_url).rstrip("/")
+
+    display_name = token.config.get("display_name", "") if token.config else ""
+    hardware_type = token.hardware_type or token.config.get("hardware_type", "unknown") if token.config else "unknown"
+    cache_dir = "/var/cache/vant-agent"
+
+    yaml_content = (
+        f"# VANT Signage Agent — auto-generated config\n"
+        f"# Generated: {datetime.now(timezone.utc).isoformat()}\n"
+        f"#\n"
+        f"# Copy this file to /etc/vant-agent/config.yaml on your device.\n"
+        f"# Then run: sudo systemctl enable --now vant-agent\n\n"
+        f"server_url: {base}\n"
+        f"provisioning_token: {token.token}\n"
+        f"hardware_type: {hardware_type}\n"
+    )
+    if display_name:
+        yaml_content += f"display_name: {display_name}\n"
+    yaml_content += (
+        f"\ncache_dir: {cache_dir}\n"
+        f"log_level: info\n"
+        f"\nmanifest_interval: 300\n"
+        f"heartbeat_interval: 30\n"
+        f"telemetry_interval: 60\n"
+    )
+
+    return Response(
+        content=yaml_content,
+        media_type="application/yaml",
+        headers={
+            "Content-Disposition": f'attachment; filename="config-{token.token[:16]}.yaml"'
+        },
+    )
 
 
 # ─── Device registration ────────────────────────────────────────────────────
