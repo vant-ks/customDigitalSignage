@@ -32,7 +32,7 @@ interface ScheduleActions {
   }) => Promise<Schedule>
 }
 
-export const useScheduleStore = create<ScheduleState & ScheduleActions>((set, get) => ({
+export const useScheduleStore = create<ScheduleState & ScheduleActions>((set, _get) => ({
   schedules: [],
   total: 0,
   page: 1,

@@ -587,5 +587,123 @@ class PlaylistReorderRequest(BaseModel):
     order: list[UUID]  # ordered list of PlaylistItem IDs
 
 
+# ─── Telemetry History ────────────────────────────────────────────────────────
+
+
+class TelemetryDataPoint(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    recorded_at: datetime
+    cpu_percent: Optional[float] = None
+    memory_percent: Optional[float] = None
+    disk_percent: Optional[float] = None
+    disk_free_gb: Optional[float] = None
+    cpu_temp_c: Optional[float] = None
+    uptime_sec: Optional[int] = None
+    net_connected: Optional[bool] = None
+    net_type: Optional[str] = None
+    net_ssid: Optional[str] = None
+    net_signal_dbm: Optional[int] = None
+    net_bandwidth_mbps: Optional[float] = None
+    playback_status: Optional[str] = None
+    cache_used_gb: Optional[float] = None
+    cache_item_count: Optional[int] = None
+    sync_status: Optional[str] = None
+    last_sync_at: Optional[datetime] = None
+
+
+class TelemetryResponse(BaseModel):
+    display_id: UUID
+    period: str
+    data: list[TelemetryDataPoint]
+
+
+# ─── Alert Rules ─────────────────────────────────────────────────────────────
+
+
+class AlertRuleCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+    event_type: str = Field(min_length=1, max_length=100)
+    threshold: Optional[dict] = None
+    display_id: Optional[UUID] = None
+    group_id: Optional[UUID] = None
+    channels: list[str] = Field(default_factory=lambda: ["dashboard"])
+    webhook_url: Optional[str] = None
+    email_recipients: Optional[list[str]] = None
+    is_active: bool = True
+    cooldown_min: int = Field(default=30, ge=1, le=1440)
+
+
+class AlertRuleUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    event_type: Optional[str] = Field(None, min_length=1, max_length=100)
+    threshold: Optional[dict] = None
+    display_id: Optional[UUID] = None
+    group_id: Optional[UUID] = None
+    channels: Optional[list[str]] = None
+    webhook_url: Optional[str] = None
+    email_recipients: Optional[list[str]] = None
+    is_active: Optional[bool] = None
+    cooldown_min: Optional[int] = Field(None, ge=1, le=1440)
+
+
+class AlertRuleResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    org_id: UUID
+    name: str
+    event_type: str
+    threshold: Optional[dict] = None
+    display_id: Optional[UUID] = None
+    group_id: Optional[UUID] = None
+    channels: list[str]
+    webhook_url: Optional[str] = None
+    email_recipients: Optional[list[str]] = None
+    is_active: bool
+    cooldown_min: int
+    last_fired_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+# ─── Notifications ───────────────────────────────────────────────────────────
+
+
+class NotificationResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    org_id: UUID
+    alert_rule_id: Optional[UUID] = None
+    severity: str
+    title: str
+    message: Optional[str] = None
+    display_id: Optional[UUID] = None
+    is_read: bool
+    read_by: Optional[UUID] = None
+    read_at: Optional[datetime] = None
+    created_at: datetime
+
+
+# ─── Audit Log ───────────────────────────────────────────────────────────────
+
+
+class AuditLogResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    org_id: UUID
+    user_id: Optional[UUID] = None
+    action: str
+    entity_type: str
+    entity_id: Optional[UUID] = None
+    details: Optional[dict] = None
+    ip_address: Optional[str] = None
+    user_agent: Optional[str] = None
+    created_at: datetime
+
+
 # Forward ref resolution
 AuthResponse.model_rebuild()

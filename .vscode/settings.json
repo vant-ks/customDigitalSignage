@@ -1,4 +1,5 @@
 {
+    "terminal.integrated.defaultLocation": "view",
     "chat.tools.terminal.autoApprove": {
         "mkdir": true,
         "ln": true,
@@ -26,6 +27,7 @@
         "/usr/local/opt/postgresql@14/bin/postgres": true,
         "/opt/homebrew/opt/postgresql@14/bin/postgres": true,
         "/usr/local/opt/postgresql@14/bin/pg_ctl": true,
-        "pg_ctl": true
+        "pg_ctl": true,
+        "railway": true
     }
 }

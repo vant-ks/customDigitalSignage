@@ -7,6 +7,9 @@ import MediaPage from './pages/MediaPage'
 import PlaylistBuilderPage from './pages/PlaylistBuilderPage'
 import ProvisioningPage from './pages/ProvisioningPage'
 import SchedulesPage from './pages/SchedulesPage'
+import MonitoringPage from './pages/MonitoringPage'
+import AlertsPage from './pages/AlertsPage'
+import AuditPage from './pages/AuditPage'
 
 function PrivateRoute() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -19,12 +22,15 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route element={<PrivateRoute />}>
         <Route element={<DashboardShell />}>
-          <Route index element={<Navigate to="/displays" replace />} />
+          <Route index element={<Navigate to="/monitoring" replace />} />
+          <Route path="/monitoring" element={<MonitoringPage />} />
           <Route path="/displays" element={<DisplaysPage />} />
           <Route path="/media" element={<MediaPage />} />
           <Route path="/playlists" element={<PlaylistBuilderPage />} />
           <Route path="/schedules" element={<SchedulesPage />} />
           <Route path="/provisioning" element={<ProvisioningPage />} />
+          <Route path="/alerts" element={<AlertsPage />} />
+          <Route path="/audit" element={<AuditPage />} />
         </Route>
       </Route>
     </Routes>

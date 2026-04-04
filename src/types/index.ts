@@ -308,3 +308,98 @@ export interface ContentManifest {
   schedules: ManifestScheduleEntry[]
   fallback_playlist: ManifestPlaylist | null
 }
+
+// ─── Phase 6: Telemetry history ───────────────────────────────────────────────
+
+export interface TelemetryDataPoint {
+  id: string
+  recorded_at: string
+  cpu_percent: number | null
+  memory_percent: number | null
+  disk_percent: number | null
+  disk_free_gb: number | null
+  cpu_temp_c: number | null
+  uptime_sec: number | null
+  net_connected: boolean | null
+  net_type: string | null
+  net_ssid: string | null
+  net_signal_dbm: number | null
+  net_bandwidth_mbps: number | null
+  playback_status: string | null
+  cache_used_gb: number | null
+  cache_item_count: number | null
+  sync_status: string | null
+  last_sync_at: string | null
+}
+
+export interface TelemetryResponse {
+  display_id: string
+  period: string
+  data: TelemetryDataPoint[]
+}
+
+// ─── Phase 6: Alert rules ─────────────────────────────────────────────────────
+
+export type AlertSeverity = 'info' | 'warning' | 'critical'
+
+export interface AlertRule {
+  id: string
+  org_id: string
+  name: string
+  event_type: string
+  threshold: Record<string, unknown> | null
+  display_id: string | null
+  group_id: string | null
+  channels: string[]
+  webhook_url: string | null
+  email_recipients: string[] | null
+  is_active: boolean
+  cooldown_min: number
+  last_fired_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface AlertRuleCreate {
+  name: string
+  event_type: string
+  threshold?: Record<string, unknown>
+  display_id?: string | null
+  group_id?: string | null
+  channels?: string[]
+  webhook_url?: string | null
+  email_recipients?: string[] | null
+  is_active?: boolean
+  cooldown_min?: number
+}
+
+// ─── Phase 6: Notifications ───────────────────────────────────────────────────
+
+export interface Notification {
+  id: string
+  org_id: string
+  alert_rule_id: string | null
+  severity: AlertSeverity
+  title: string
+  message: string | null
+  display_id: string | null
+  is_read: boolean
+  read_by: string | null
+  read_at: string | null
+  created_at: string
+}
+
+// ─── Phase 6: Audit log ───────────────────────────────────────────────────────
+
+export interface AuditLog {
+  id: string
+  org_id: string
+  user_id: string | null
+  action: string
+  entity_type: string
+  entity_id: string | null
+  details: Record<string, unknown> | null
+  ip_address: string | null
+  user_agent: string | null
+  created_at: string
+}

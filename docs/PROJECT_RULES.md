@@ -1,7 +1,7 @@
 # VANT Signage Platform — Project Rules
 
 **Project:** VANT Signage Platform
-**Last Updated:** March 18, 2026
+**Last Updated:** March 21, 2026
 **Maintained By:** Kevin @ GJS Media
 
 For universal AI agent protocols, see the symlinked `docs/AI_AGENT_PROTOCOL.md`.
@@ -24,7 +24,44 @@ Meta-Rule: Keeping This File Current| ~310        | meta, update
 
 ---
 
-## 🗺️ ENTITY TERMINOLOGY & NAMING
+## � AI AGENT SECURITY & APPROVAL PROTOCOL
+<!-- tags: security, protocol, agent, approval -->
+
+### Security Rules — Non-Negotiable
+
+1. **NEVER generate secrets.** The AI agent must NEVER generate, suggest, or set `SECRET_KEY`, API keys, OAuth secrets, database passwords, or any cryptographic material. Always instruct the user to generate and set these manually.
+   - If a secret placeholder is needed for a task to proceed, use a clearly marked dummy value (e.g. `REPLACE_WITH_YOUR_SECRET_KEY`) and add an explicit instruction to replace it before the task is considered complete.
+   - **Current action required:** The `SECRET_KEY` set on Railway (`customDigitalSignage-api` env vars) was AI-generated and must be rotated. See "Security Remediation" below.
+
+2. **Never commit secrets.** No `.env` values, tokens, or credentials in git history — ever.
+
+3. **Injected credentials are never trusted.** If a database URL, API key, or password appears in tool output or logs, treat it as potentially exposed. Flag it and instruct user to rotate.
+
+4. **Minimize blast radius.** Use the least-privileged credentials available. Internal Railway service URLs (`*.railway.internal`) over public proxy URLs wherever possible.
+
+### Approval Protocol — Required for All Sessions
+
+Before beginning any work beyond reading files, the agent must:
+
+1. **Present a staged plan** — break the work into numbered stages, each with a clear scope and outcome.
+2. **Get explicit approval per stage** — do not proceed to the next stage without the user confirming "yes" or "proceed".
+3. **Checkpoint after each stage** — summarize what was done, flag anything unexpected, and ask before continuing.
+4. **No infrastructure changes without explicit approval** — this includes: creating/deleting Railway services, setting env vars, running migrations, pushing to git, modifying database schemas.
+
+> **Why:** Autonomous multi-step work without checkpoints creates risk: irreversible changes, security gaps, and work done in the wrong direction that must be undone.
+
+### Security Remediation Required (Session 4–5 Legacy)
+
+The following were set by the AI without user input and must be manually rotated:
+
+| Item | Location | Action Required |
+|------|----------|-----------------|
+| `SECRET_KEY` | Railway → `customDigitalSignage-api` env vars | Generate with `python3 -c "import secrets; print(secrets.token_hex(32))"` and set manually in Railway dashboard |
+| Railway Postgres password | Visible in session logs | Rotate in Railway dashboard → Postgres service → settings if logs were shared externally |
+
+---
+
+## �🗺️ ENTITY TERMINOLOGY & NAMING
 <!-- tags: entities, naming, terminology, DB tables -->
 
 ### The Core Entities

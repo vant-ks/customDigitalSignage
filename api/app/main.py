@@ -2,6 +2,7 @@
 VANT Signage Platform — FastAPI Application
 """
 
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -13,6 +14,8 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from app.core.config import get_settings
+from app.core.database import async_session_factory
+from app.services.alert_evaluator import run_alert_evaluator_loop
 from app.websocket.manager import ws_manager
 
 settings = get_settings()
@@ -35,7 +38,16 @@ limiter = Limiter(key_func=get_remote_address)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("VANT Signage API starting up")
+    evaluator_task = asyncio.create_task(
+        run_alert_evaluator_loop(async_session_factory),
+        name="alert_evaluator",
+    )
     yield
+    evaluator_task.cancel()
+    try:
+        await evaluator_task
+    except asyncio.CancelledError:
+        pass
     logger.info("VANT Signage API shutting down")
 
 
@@ -74,6 +86,9 @@ from app.api.routes.storage import router as storage_router
 from app.api.routes.media import router as media_router
 from app.api.routes.playlists import router as playlists_router
 from app.api.routes.schedules import router as schedules_router
+from app.api.routes.telemetry import router as telemetry_router
+from app.api.routes.alerts import router as alerts_router
+from app.api.routes.audit import router as audit_router
 from app.websocket.routes import router as ws_router
 
 app.include_router(auth_router)
@@ -85,6 +100,9 @@ app.include_router(storage_router)
 app.include_router(media_router)
 app.include_router(playlists_router)
 app.include_router(schedules_router)
+app.include_router(telemetry_router)
+app.include_router(alerts_router)
+app.include_router(audit_router)
 app.include_router(ws_router)
 
 # ─── Rate limit auth endpoints ───────────────────────────────────────────────

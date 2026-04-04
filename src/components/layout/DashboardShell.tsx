@@ -10,16 +10,23 @@ import {
   Sun,
   Moon,
   ChevronRight,
+  Activity,
+  Bell,
+  ClipboardList,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useAuthStore } from '../../stores/authStore'
+import { useAlertStore } from '../../stores/alertStore'
 
 const NAV_ITEMS = [
+  { label: 'Monitoring', href: '/monitoring', icon: Activity },
   { label: 'Displays', href: '/displays', icon: Monitor },
   { label: 'Playlists', href: '/playlists', icon: Play },
   { label: 'Media', href: '/media', icon: Image },
   { label: 'Schedules', href: '/schedules', icon: Calendar },
   { label: 'Provisioning', href: '/provisioning', icon: Cpu },
+  { label: 'Alerts', href: '/alerts', icon: Bell },
+  { label: 'Audit Log', href: '/audit', icon: ClipboardList },
   { label: 'Settings', href: '/settings', icon: Settings },
 ]
 
@@ -36,6 +43,116 @@ function useTheme() {
   }
 
   return { dark, toggle }
+}
+
+// ─── Notification Bell ────────────────────────────────────────────────────────
+
+function NotificationBell() {
+  const { unreadCount, notifications, fetchUnreadCount, fetchNotifications, markRead, markAllRead } =
+    useAlertStore()
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    fetchUnreadCount()
+    const interval = setInterval(fetchUnreadCount, 30_000)
+    return () => clearInterval(interval)
+  }, [fetchUnreadCount])
+
+  useEffect(() => {
+    if (open) fetchNotifications()
+  }, [open, fetchNotifications])
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="relative p-1.5 rounded-md text-gray-400 hover:text-gray-100 hover:bg-white/10 transition-colors"
+        title="Notifications"
+      >
+        <Bell size={15} />
+        {unreadCount > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-0.5 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-8 z-50 w-80 rounded-xl bg-dark-bg-2 border border-white/10 shadow-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
+            <span className="text-[13px] font-semibold text-gray-200">Notifications</span>
+            {unreadCount > 0 && (
+              <button
+                onClick={markAllRead}
+                className="text-[11px] text-gjs-blue hover:text-gjs-blue/70"
+              >
+                Mark all read
+              </button>
+            )}
+          </div>
+          <div className="max-h-80 overflow-y-auto">
+            {notifications.length === 0 ? (
+              <p className="text-[13px] text-gray-600 text-center py-8">No notifications</p>
+            ) : (
+              notifications.slice(0, 10).map((n) => (
+                <div
+                  key={n.id}
+                  className={`flex items-start gap-2.5 px-4 py-2.5 border-b border-white/5 text-[12px] ${
+                    n.is_read ? 'opacity-50' : ''
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                      n.severity === 'critical'
+                        ? 'bg-red-400'
+                        : n.severity === 'warning'
+                          ? 'bg-yellow-400'
+                          : 'bg-gjs-blue'
+                    }`}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-gray-200 truncate">{n.title}</p>
+                    <p className="text-gray-600 text-[11px] mt-0.5">
+                      {new Date(n.created_at).toLocaleString(undefined, {
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
+                  {!n.is_read && (
+                    <button
+                      onClick={() => markRead(n.id)}
+                      className="flex-shrink-0 p-0.5 text-gray-600 hover:text-gjs-blue"
+                    >
+                      ✓
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+          <div className="px-4 py-2 border-t border-white/5">
+            <Link
+              to="/alerts"
+              onClick={() => setOpen(false)}
+              className="text-[12px] text-gjs-blue hover:text-gjs-blue/70"
+            >
+              View all →
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function DashboardShell() {
@@ -154,6 +271,7 @@ export default function DashboardShell() {
             {/* Breadcrumb rendered by pages via portal or context if needed */}
           </div>
           <div className="flex items-center gap-3 text-[12px] text-gray-500">
+            <NotificationBell />
             <span className="w-1.5 h-1.5 rounded-full bg-status-online inline-block" />
             API connected
           </div>
