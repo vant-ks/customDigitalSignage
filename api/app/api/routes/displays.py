@@ -7,7 +7,7 @@ import secrets
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -22,6 +22,7 @@ from app.schemas.schemas import (
     PaginatedResponse,
     TelemetrySnapshot,
 )
+from app.services.audit import write_audit
 
 router = APIRouter(prefix="/api/displays", tags=["displays"])
 
@@ -124,6 +125,7 @@ async def get_display(
 @router.post("", status_code=201)
 async def create_display(
     req: DisplayCreate,
+    request: Request,
     current_user: TokenData = Depends(require_role("admin", "manager")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -151,6 +153,11 @@ async def create_display(
 
     db.add(display)
     await db.flush()
+    await write_audit(
+        db=db, user=current_user, action="display.create",
+        entity_type="display", entity_id=display.id,
+        details={"name": display.name}, request=request,
+    )
     return DisplayResponse.model_validate(display)
 
 
@@ -158,6 +165,7 @@ async def create_display(
 async def update_display(
     display_id: UUID,
     req: DisplayUpdate,
+    request: Request,
     current_user: TokenData = Depends(require_role("admin", "manager")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -179,12 +187,19 @@ async def update_display(
         display.cache_policy = req.cache_policy.model_dump()
 
     await db.flush()
+    await write_audit(
+        db=db, user=current_user, action="display.update",
+        entity_type="display", entity_id=display_id,
+        details=req.model_dump(exclude_none=True, exclude={"cache_policy"}),
+        request=request,
+    )
     return DisplayResponse.model_validate(display)
 
 
 @router.delete("/{display_id}", status_code=204)
 async def delete_display(
     display_id: UUID,
+    request: Request,
     current_user: TokenData = Depends(require_role("admin")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -197,6 +212,11 @@ async def delete_display(
     display = result.scalar_one_or_none()
     if not display:
         raise HTTPException(status_code=404, detail="Display not found")
+    await write_audit(
+        db=db, user=current_user, action="display.delete",
+        entity_type="display", entity_id=display_id,
+        details={"name": display.name}, request=request,
+    )
     await db.delete(display)
 
 

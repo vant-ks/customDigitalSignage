@@ -12,6 +12,7 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { useAlertStore } from '../stores/alertStore'
+import { useAuthStore } from '../stores/authStore'
 import type { AlertRule, AlertRuleCreate, AlertSeverity, Notification } from '../types'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
@@ -184,11 +185,13 @@ function RuleCard({
   onEdit,
   onDelete,
   onToggle,
+  isViewer,
 }: {
   rule: AlertRule
   onEdit: () => void
   onDelete: () => void
   onToggle: () => void
+  isViewer: boolean
 }) {
   const eventOpt = EVENT_TYPE_OPTIONS.find((e) => e.value === rule.event_type)
   return (
@@ -217,28 +220,35 @@ function RuleCard({
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           <button
-            onClick={onToggle}
-            title={rule.is_active ? 'Disable' : 'Enable'}
+            onClick={isViewer ? undefined : onToggle}
+            disabled={isViewer}
+            title={isViewer ? 'Read-only' : rule.is_active ? 'Disable' : 'Enable'}
             className={`px-2.5 py-1 rounded text-[11px] font-semibold transition-colors ${
-              rule.is_active
-                ? 'bg-status-online/10 text-status-online hover:bg-status-online/20'
-                : 'bg-white/5 text-gray-500 hover:bg-white/10'
+              isViewer
+                ? 'bg-white/5 text-gray-600 cursor-default'
+                : rule.is_active
+                  ? 'bg-status-online/10 text-status-online hover:bg-status-online/20'
+                  : 'bg-white/5 text-gray-500 hover:bg-white/10'
             }`}
           >
             {rule.is_active ? 'Active' : 'Disabled'}
           </button>
-          <button
-            onClick={onEdit}
-            className="p-1.5 rounded text-gray-500 hover:text-gray-200 hover:bg-white/10 transition-colors"
-          >
-            <Plus size={13} className="rotate-45" />
-          </button>
-          <button
-            onClick={onDelete}
-            className="p-1.5 rounded text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-colors"
-          >
-            <Trash2 size={13} />
-          </button>
+          {!isViewer && (
+            <>
+              <button
+                onClick={onEdit}
+                className="p-1.5 rounded text-gray-500 hover:text-gray-200 hover:bg-white/10 transition-colors"
+              >
+                <Plus size={13} className="rotate-45" />
+              </button>
+              <button
+                onClick={onDelete}
+                className="p-1.5 rounded text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-colors"
+              >
+                <Trash2 size={13} />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -304,6 +314,8 @@ export default function AlertsPage() {
     markAllRead,
   } = useAlertStore()
 
+  const isViewer = useAuthStore((s) => s.user?.role === 'viewer')
+
   const [tab, setTab] = useState<Tab>('rules')
   const [showForm, setShowForm] = useState(false)
   const [editRule, setEditRule] = useState<AlertRule | null>(null)
@@ -338,7 +350,7 @@ export default function AlertsPage() {
             Configure monitoring rules and view notifications
           </p>
         </div>
-        {tab === 'rules' && (
+        {tab === 'rules' && !isViewer && (
           <button
             onClick={() => { setEditRule(null); setShowForm(true) }}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gjs-blue text-white text-[13px] font-semibold hover:bg-gjs-blue/80 transition-colors"
@@ -393,6 +405,7 @@ export default function AlertsPage() {
               <RuleCard
                 key={rule.id}
                 rule={rule}
+                isViewer={!!isViewer}
                 onEdit={() => { setEditRule(rule); setShowForm(true) }}
                 onDelete={() => handleDelete(rule.id)}
                 onToggle={() => updateRule(rule.id, { is_active: !rule.is_active })}

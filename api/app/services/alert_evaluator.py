@@ -18,7 +18,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.models.models import AlertRule, DeviceTelemetry, Display, Notification
@@ -27,6 +27,10 @@ logger = logging.getLogger("vant.alert_evaluator")
 
 # How often the evaluator loop runs (seconds)
 EVAL_INTERVAL_SEC = 60
+# Prune telemetry older than this many days
+TELEMETRY_RETAIN_DAYS = 90
+# Run pruning once per day: 86400s / 60s = 1440 cycles
+_PRUNE_EVERY_N_CYCLES = 1440
 
 
 def _threshold_met(event_type: str, rule: AlertRule, display: Display, telemetry: DeviceTelemetry | None) -> bool:
@@ -86,6 +90,22 @@ async def evaluate_alerts(session_factory: async_sessionmaker) -> None:
             await _run_evaluation(db)
         except Exception:
             logger.exception("Error during alert evaluation pass")
+
+
+async def prune_old_telemetry(session_factory: async_sessionmaker) -> None:
+    """Delete device_telemetry rows older than TELEMETRY_RETAIN_DAYS."""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=TELEMETRY_RETAIN_DAYS)
+    async with session_factory() as db:
+        try:
+            result = await db.execute(
+                delete(DeviceTelemetry).where(DeviceTelemetry.recorded_at < cutoff)
+            )
+            await db.commit()
+            deleted = result.rowcount
+            if deleted:
+                logger.info("Pruned %d telemetry rows older than %d days", deleted, TELEMETRY_RETAIN_DAYS)
+        except Exception:
+            logger.exception("Error during telemetry pruning")
 
 
 async def _run_evaluation(db: AsyncSession) -> None:
@@ -183,8 +203,15 @@ async def _run_evaluation(db: AsyncSession) -> None:
 
 
 async def run_alert_evaluator_loop(session_factory: async_sessionmaker) -> None:
-    """Infinite loop — run alert evaluation every EVAL_INTERVAL_SEC seconds."""
+    """Infinite loop — run alert evaluation every EVAL_INTERVAL_SEC seconds.
+
+    Also prunes old telemetry rows once per day (_PRUNE_EVERY_N_CYCLES cycles).
+    """
     logger.info("Alert evaluator started (interval=%ds)", EVAL_INTERVAL_SEC)
+    cycle = 0
     while True:
         await asyncio.sleep(EVAL_INTERVAL_SEC)
         await evaluate_alerts(session_factory)
+        cycle += 1
+        if cycle % _PRUNE_EVERY_N_CYCLES == 0:
+            await prune_old_telemetry(session_factory)

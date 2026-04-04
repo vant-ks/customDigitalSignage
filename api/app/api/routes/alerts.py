@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,6 +33,7 @@ from app.schemas.schemas import (
     NotificationResponse,
     PaginatedResponse,
 )
+from app.services.audit import write_audit
 
 router = APIRouter(tags=["alerts"])
 
@@ -66,11 +67,18 @@ async def list_alert_rules(
 @router.post("/api/alert-rules", response_model=AlertRuleResponse, status_code=status.HTTP_201_CREATED)
 async def create_alert_rule(
     body: AlertRuleCreate,
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: TokenData = Depends(require_role("admin", "manager")),
 ):
     rule = AlertRule(org_id=current_user.org_id, **body.model_dump())
     db.add(rule)
+    await db.flush()
+    await write_audit(
+        db=db, user=current_user, action="alert_rule.create",
+        entity_type="alert_rule", entity_id=rule.id,
+        details={"name": rule.name, "event_type": rule.event_type}, request=request,
+    )
     await db.commit()
     await db.refresh(rule)
     return AlertRuleResponse.model_validate(rule)
@@ -90,6 +98,7 @@ async def get_alert_rule(
 async def update_alert_rule(
     rule_id: UUID,
     body: AlertRuleUpdate,
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: TokenData = Depends(require_role("admin", "manager")),
 ):
@@ -97,6 +106,12 @@ async def update_alert_rule(
     for field, value in body.model_dump(exclude_unset=True).items():
         setattr(rule, field, value)
     rule.updated_at = datetime.now(timezone.utc)
+    await db.flush()
+    await write_audit(
+        db=db, user=current_user, action="alert_rule.update",
+        entity_type="alert_rule", entity_id=rule_id,
+        details=body.model_dump(exclude_unset=True), request=request,
+    )
     await db.commit()
     await db.refresh(rule)
     return AlertRuleResponse.model_validate(rule)
@@ -105,10 +120,16 @@ async def update_alert_rule(
 @router.delete("/api/alert-rules/{rule_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_alert_rule(
     rule_id: UUID,
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: TokenData = Depends(require_role("admin", "manager")),
 ):
     rule = await _get_rule_or_404(rule_id, current_user.org_id, db)
+    await write_audit(
+        db=db, user=current_user, action="alert_rule.delete",
+        entity_type="alert_rule", entity_id=rule_id,
+        details={"name": rule.name}, request=request,
+    )
     await db.delete(rule)
     await db.commit()
 
