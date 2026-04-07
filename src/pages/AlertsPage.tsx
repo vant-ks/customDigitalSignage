@@ -60,6 +60,10 @@ function RuleForm({ initial, onSave, onCancel }: RuleFormProps) {
     (initial?.threshold?.gt as number) ?? 90
   )
   const [cooldown, setCooldown] = useState(initial?.cooldown_min ?? 30)
+  const [emailStr, setEmailStr] = useState(
+    (initial?.email_recipients ?? []).join(', ')
+  )
+  const [webhookUrl, setWebhookUrl] = useState(initial?.webhook_url ?? '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -71,12 +75,22 @@ function RuleForm({ initial, onSave, onCancel }: RuleFormProps) {
     setSaving(true)
     setError(null)
     try {
+      const channels: string[] = ['dashboard']
+      const emailRecipients = emailStr
+        .split(',')
+        .map((e) => e.trim())
+        .filter(Boolean)
+      if (emailRecipients.length > 0) channels.push('email')
+      if (webhookUrl.trim()) channels.push('webhook')
+
       const payload: AlertRuleCreate = {
         name: name.trim(),
         event_type: eventType,
-        channels: ['dashboard'],
+        channels,
         cooldown_min: cooldown,
         is_active: true,
+        email_recipients: emailRecipients.length > 0 ? emailRecipients : null,
+        webhook_url: webhookUrl.trim() || null,
         ...(selectedEvent.hasThreshold ? { threshold: { gt: thresholdGt } } : {}),
       }
       await onSave(payload)
@@ -152,6 +166,32 @@ function RuleForm({ initial, onSave, onCancel }: RuleFormProps) {
             />
           </div>
 
+          <div>
+            <label className="block text-[12px] text-gray-400 mb-1.5">
+              Email recipients <span className="text-gray-600">(comma-separated, optional)</span>
+            </label>
+            <input
+              type="text"
+              placeholder="ops@example.com, alerts@example.com"
+              className="w-full bg-dark-bg-3 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-gjs-blue/50"
+              value={emailStr}
+              onChange={(e) => setEmailStr(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[12px] text-gray-400 mb-1.5">
+              Webhook URL <span className="text-gray-600">(optional — Slack, custom endpoint)</span>
+            </label>
+            <input
+              type="url"
+              placeholder="https://hooks.slack.com/services/…"
+              className="w-full bg-dark-bg-3 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-gjs-blue/50"
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+            />
+          </div>
+
           {error && (
             <p className="text-[12px] text-red-400">{error}</p>
           )}
@@ -217,6 +257,18 @@ function RuleCard({
             Cooldown: {rule.cooldown_min}m
             {rule.last_fired_at && ` · Last fired: ${timeAgo(rule.last_fired_at)}`}
           </p>
+          {(rule.email_recipients?.length || rule.webhook_url) && (
+            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+              {rule.email_recipients && rule.email_recipients.length > 0 && (
+                <span className="px-1.5 py-0.5 rounded bg-white/5 text-[10px] text-gray-500">
+                  ✉ {rule.email_recipients.length} email{rule.email_recipients.length > 1 ? 's' : ''}
+                </span>
+              )}
+              {rule.webhook_url && (
+                <span className="px-1.5 py-0.5 rounded bg-white/5 text-[10px] text-gray-500">⚡ webhook</span>
+              )}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           <button

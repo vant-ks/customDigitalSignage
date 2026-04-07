@@ -199,6 +199,29 @@ async def _run_evaluation(db: AsyncSession) -> None:
             except Exception:
                 logger.debug("WebSocket push failed (no active connections?)")
 
+            # Email / webhook delivery (best-effort)
+            channels = rule.channels or []
+            if "email" in channels and rule.email_recipients:
+                from app.services.notifier import send_email
+                await send_email(
+                    recipients=rule.email_recipients,
+                    subject=notif.title,
+                    title=notif.title,
+                    message=notif.message or "",
+                    severity=notif.severity,
+                )
+            if "webhook" in channels and rule.webhook_url:
+                from app.services.notifier import send_webhook
+                await send_webhook(
+                    url=rule.webhook_url,
+                    title=notif.title,
+                    message=notif.message or "",
+                    severity=notif.severity,
+                    event_type=rule.event_type,
+                    display_id=str(display.id),
+                    rule_id=str(rule.id),
+                )
+
     await db.commit()
 
 

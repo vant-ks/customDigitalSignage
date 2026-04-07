@@ -10,6 +10,7 @@ import SchedulesPage from './pages/SchedulesPage'
 import MonitoringPage from './pages/MonitoringPage'
 import AlertsPage from './pages/AlertsPage'
 import AuditPage from './pages/AuditPage'
+import SettingsPage from './pages/SettingsPage'
 
 function PrivateRoute() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/provisioning" element={<ProvisioningPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
           <Route path="/audit" element={<AuditPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
       </Route>
     </Routes>

@@ -46,6 +46,16 @@ class Settings(BaseSettings):
     # ── Frontend URL (used to build OAuth redirect URIs) ────────────────
     frontend_url: str = "http://localhost:3031"
 
+    # ── SMTP (optional — enables email alert delivery) ───────────────────
+    # Set smtp_host to enable email sending. Leave blank to disable.
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_from_email: str = "alerts@vant.signage"
+    smtp_from_name: str = "VANT Signage"
+    smtp_use_tls: bool = True
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
     @property
