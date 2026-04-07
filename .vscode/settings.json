@@ -1,4 +1,5 @@
 {
+    "python.defaultInterpreterPath": "${workspaceFolder}/api/.venv/bin/python",
     "terminal.integrated.defaultLocation": "view",
     "chat.tools.terminal.autoApprove": {
         "mkdir": true,

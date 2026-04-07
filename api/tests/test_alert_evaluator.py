@@ -7,25 +7,26 @@ Tested functions:
 """
 
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
 from app.services.alert_evaluator import _severity_for_event, _threshold_met
 
 
-def make_rule(**kwargs):
+def make_rule(**kwargs) -> Any:
     defaults = {"threshold": {}, "channels": ["dashboard"], "email_recipients": None, "webhook_url": None}
     defaults.update(kwargs)
     return SimpleNamespace(**defaults)
 
 
-def make_display(**kwargs):
+def make_display(**kwargs) -> Any:
     defaults = {"status": "online"}
     defaults.update(kwargs)
     return SimpleNamespace(**defaults)
 
 
-def make_telemetry(**kwargs):
+def make_telemetry(**kwargs) -> Any:
     defaults = {
         "cpu_percent": None,
         "memory_percent": None,

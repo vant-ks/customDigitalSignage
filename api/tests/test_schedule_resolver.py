@@ -8,13 +8,14 @@ Tested functions:
 
 from datetime import datetime, timezone
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
 from app.api.routes.schedules import _is_schedule_active_at, _specificity
 
 
-def make_schedule(**kwargs):
+def make_schedule(**kwargs) -> Any:
     """Build a minimal Schedule-like object for testing."""
     defaults = {
         "is_active": True,

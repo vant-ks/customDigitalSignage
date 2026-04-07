@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Optional
 
-import httpx
+import httpx  # type: ignore[import]
 
 from vant_agent.core.config import AgentConfig
 
@@ -100,7 +100,7 @@ class ApiClient:
         Passes device token if URL is on our own server.
         Returns True on success.
         """
-        import aiofiles
+        import aiofiles  # type: ignore[import-untyped]
 
         headers = {}
         if url.startswith(self.config.server_url):

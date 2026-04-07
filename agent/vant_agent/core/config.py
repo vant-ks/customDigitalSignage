@@ -19,7 +19,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 DEFAULT_CONFIG_PATH = Path(
     os.environ.get("VANT_CONFIG", "/etc/vant-agent/config.yaml")

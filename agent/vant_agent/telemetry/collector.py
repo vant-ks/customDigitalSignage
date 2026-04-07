@@ -20,7 +20,7 @@ def collect(cache_stats: Optional[dict] = None, playback_state: Optional[dict] =
     data: dict = {}
 
     try:
-        import psutil
+        import psutil  # type: ignore[import-untyped]
 
         data["cpu_percent"] = psutil.cpu_percent(interval=1)
         mem = psutil.virtual_memory()
@@ -78,8 +78,8 @@ def _get_cpu_temp() -> Optional[float]:
 
     # psutil sensors_temperatures (Linux hwmon)
     try:
-        import psutil
-        temps = psutil.sensors_temperatures()
+        import psutil  # type: ignore[import-untyped]
+        temps = psutil.sensors_temperatures()  # type: ignore[attr-defined]
         for name in ("cpu_thermal", "coretemp", "k10temp", "acpitz", "cpu-thermal"):
             if name in temps and temps[name]:
                 return temps[name][0].current

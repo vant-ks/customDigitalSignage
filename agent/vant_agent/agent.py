@@ -210,7 +210,7 @@ class VantAgent:
     # ─── WebSocket loop ───────────────────────────────────────────────────
 
     async def _ws_loop(self) -> None:
-        import websockets
+        import websockets  # type: ignore[import]
 
         ws_url = f"{self.config.ws_url}/ws?device_token={self.config.device_token}"
         backoff_idx = 0

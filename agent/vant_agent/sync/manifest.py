@@ -30,8 +30,9 @@ class ManifestManager:
         path = self.config.manifest_path
         if path.exists():
             try:
-                self._cached = json.loads(path.read_text())
-                logger.info(f"Loaded local manifest hash={self._cached.get('manifest_hash')}")
+                loaded = json.loads(path.read_text())
+                self._cached = loaded
+                logger.info(f"Loaded local manifest hash={loaded.get('manifest_hash')}")
             except Exception as e:
                 logger.warning(f"Could not read local manifest: {e}")
 

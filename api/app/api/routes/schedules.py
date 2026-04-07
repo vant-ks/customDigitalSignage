@@ -276,7 +276,7 @@ async def create_override(
     # Notify connected displays via WebSocket
     async def _notify():
         await ws_manager.broadcast_to_org(
-            current_user.org_id,
+            str(current_user.org_id),
             {"type": "schedule_override", "schedule_id": str(s.id)},
         )
 

@@ -174,8 +174,9 @@ def _verify_hash(path: Path, expected: str) -> bool:
 
 
 def _human_size(n: int) -> str:
+    size: float = n
     for unit in ("B", "KB", "MB", "GB"):
-        if n < 1024:
-            return f"{n:.1f} {unit}"
-        n /= 1024
-    return f"{n:.1f} TB"
+        if size < 1024:
+            return f"{size:.1f} {unit}"
+        size /= 1024
+    return f"{size:.1f} TB"
