@@ -89,7 +89,7 @@ function AssetThumbnail({ asset }: { asset: MediaAsset }) {
     )
   }
   return (
-    <div className="w-full h-full flex items-center justify-center bg-white/5">
+    <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-white/5">
       <TypeIcon size={28} className="text-gray-500" />
     </div>
   )
@@ -112,17 +112,17 @@ function AssetCard({
       className={`group relative rounded-xl overflow-hidden cursor-pointer border transition-all ${
         selected
           ? 'border-gjs-blue bg-gjs-blue/10'
-          : 'border-white/5 bg-dark-bg-2 hover:border-white/15'
+          : 'border-gray-200 dark:border-white/5 bg-light-bg-2 dark:bg-dark-bg-2 hover:border-white/15'
       }`}
     >
-      <div className="aspect-video bg-dark-bg-3 relative overflow-hidden">
+      <div className="aspect-video bg-light-bg-3 dark:bg-dark-bg-3 relative overflow-hidden">
         <AssetThumbnail asset={asset} />
         <div className="absolute top-1.5 right-1.5">
           <ProcessingBadge status={asset.processing_status} />
         </div>
       </div>
       <div className="p-2.5">
-        <p className="text-[13px] font-medium text-gray-100 truncate">{asset.name}</p>
+        <p className="text-[13px] font-medium text-gray-900 dark:text-gray-100 truncate">{asset.name}</p>
         <p className="text-[11px] text-gray-500 mt-0.5">
           {formatBytes(asset.file_size_bytes)}
           {asset.duration_sec ? ` · ${formatDuration(asset.duration_sec)}` : ''}
@@ -133,7 +133,7 @@ function AssetCard({
             {asset.tags.slice(0, 3).map((t) => (
               <span
                 key={t}
-                className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/5 text-gray-400"
+                className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/5 text-gray-400"
               >
                 {t}
               </span>
@@ -170,15 +170,15 @@ function AssetRow({
   return (
     <div
       onClick={() => onSelect(asset)}
-      className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer border-b border-white/5 transition-colors ${
+      className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer border-b border-gray-200 dark:border-white/5 transition-colors ${
         selected ? 'bg-gjs-blue/10' : 'hover:bg-white/[0.03]'
       }`}
     >
-      <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-dark-bg-3">
+      <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-light-bg-3 dark:bg-dark-bg-3">
         <AssetThumbnail asset={asset} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-medium text-gray-100 truncate">{asset.name}</p>
+        <p className="text-[13px] font-medium text-gray-900 dark:text-gray-100 truncate">{asset.name}</p>
         <p className="text-[11px] text-gray-500">{asset.folder}</p>
       </div>
       <div className="hidden sm:flex items-center gap-4">
@@ -247,21 +247,21 @@ function StorageBrowserModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-dark-bg-2 border border-white/10 rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl">
+      <div className="bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-200 dark:border-white/5">
           <Cloud size={16} className="text-gjs-blue flex-shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-semibold text-gray-100">{provider.label}</p>
+            <p className="text-[13px] font-semibold text-gray-900 dark:text-gray-100">{provider.label}</p>
             <p className="text-[11px] text-gray-500 truncate">{PROVIDER_LABELS[provider.provider_type]}</p>
           </div>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-100">
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-gray-100">
             <X size={16} />
           </button>
         </div>
 
         {/* Breadcrumb nav */}
-        <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5">
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 dark:border-white/5">
           {pathHistory.length > 1 && (
             <button
               onClick={goBack}
@@ -288,7 +288,7 @@ function StorageBrowserModal({
             browseEntries.map((entry) => (
               <div
                 key={entry.path}
-                className="flex items-center gap-3 px-4 py-2.5 border-b border-white/5 hover:bg-white/[0.03] cursor-pointer group"
+                className="flex items-center gap-3 px-4 py-2.5 border-b border-gray-200 dark:border-white/5 hover:bg-white/[0.03] cursor-pointer group"
                 onClick={() => entry.is_folder && navigate(entry)}
               >
                 {entry.is_folder ? (
@@ -297,7 +297,7 @@ function StorageBrowserModal({
                   <Image size={16} className="text-gray-400 flex-shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] text-gray-200 truncate">{entry.name}</p>
+                  <p className="text-[13px] text-gray-800 dark:text-gray-200 truncate">{entry.name}</p>
                   {!entry.is_folder && (
                     <p className="text-[11px] text-gray-500">
                       {formatBytes(entry.size_bytes)}
@@ -360,17 +360,17 @@ function AssetDetailPanel({
   const TypeIcon = FILE_TYPE_ICON[asset.file_type] ?? Image
 
   return (
-    <aside className="w-72 flex-shrink-0 bg-dark-bg-2 border-l border-white/5 flex flex-col overflow-hidden">
+    <aside className="w-72 flex-shrink-0 bg-light-bg-2 dark:bg-dark-bg-2 border-l border-gray-200 dark:border-white/5 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-        <p className="text-[13px] font-semibold text-gray-100">Asset Details</p>
-        <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-100">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-white/5">
+        <p className="text-[13px] font-semibold text-gray-900 dark:text-gray-100">Asset Details</p>
+        <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-gray-100">
           <X size={14} />
         </button>
       </div>
 
       {/* Preview */}
-      <div className="aspect-video bg-dark-bg-3 relative overflow-hidden flex-shrink-0">
+      <div className="aspect-video bg-light-bg-3 dark:bg-dark-bg-3 relative overflow-hidden flex-shrink-0">
         <AssetThumbnail asset={asset} />
       </div>
 
@@ -378,13 +378,13 @@ function AssetDetailPanel({
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div>
           <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">Name</p>
-          <p className="text-[13px] text-gray-100 break-all">{asset.name}</p>
+          <p className="text-[13px] text-gray-900 dark:text-gray-100 break-all">{asset.name}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-x-4 gap-y-3">
           <div>
             <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Type</p>
-            <span className="flex items-center gap-1 text-[12px] text-gray-300">
+            <span className="flex items-center gap-1 text-[12px] text-gray-700 dark:text-gray-300">
               <TypeIcon size={12} />
               {asset.file_type.replace('_', ' ')}
             </span>
@@ -396,32 +396,32 @@ function AssetDetailPanel({
           {asset.file_size_bytes != null && (
             <div>
               <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Size</p>
-              <p className="text-[12px] text-gray-300">{formatBytes(asset.file_size_bytes)}</p>
+              <p className="text-[12px] text-gray-700 dark:text-gray-300">{formatBytes(asset.file_size_bytes)}</p>
             </div>
           )}
           {asset.duration_sec != null && (
             <div>
               <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Duration</p>
-              <p className="text-[12px] text-gray-300">{formatDuration(asset.duration_sec)}</p>
+              <p className="text-[12px] text-gray-700 dark:text-gray-300">{formatDuration(asset.duration_sec)}</p>
             </div>
           )}
           {asset.width != null && asset.height != null && (
             <div>
               <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Resolution</p>
-              <p className="text-[12px] text-gray-300">{asset.width}×{asset.height}</p>
+              <p className="text-[12px] text-gray-700 dark:text-gray-300">{asset.width}×{asset.height}</p>
             </div>
           )}
           {asset.codec && (
             <div>
               <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Codec</p>
-              <p className="text-[12px] text-gray-300">{asset.codec}</p>
+              <p className="text-[12px] text-gray-700 dark:text-gray-300">{asset.codec}</p>
             </div>
           )}
         </div>
 
         <div>
           <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">Folder</p>
-          <p className="text-[12px] text-gray-300 font-mono">{asset.folder || '/'}</p>
+          <p className="text-[12px] text-gray-700 dark:text-gray-300 font-mono">{asset.folder || '/'}</p>
         </div>
 
         {asset.source_hash && (
@@ -436,7 +436,7 @@ function AssetDetailPanel({
             <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1.5">Tags</p>
             <div className="flex flex-wrap gap-1">
               {asset.tags.map((t) => (
-                <span key={t} className="text-[11px] px-2 py-0.5 rounded-full bg-white/10 text-gray-300">
+                <span key={t} className="text-[11px] px-2 py-0.5 rounded-full bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300">
                   {t}
                 </span>
               ))}
@@ -453,10 +453,10 @@ function AssetDetailPanel({
       </div>
 
       {/* Actions */}
-      <div className="px-4 py-3 border-t border-white/5 flex gap-2">
+      <div className="px-4 py-3 border-t border-gray-200 dark:border-white/5 flex gap-2">
         <button
           onClick={handleDownload}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[12px] text-gray-300 transition-colors"
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-gray-200 dark:hover:bg-white/10 text-[12px] text-gray-700 dark:text-gray-300 transition-colors"
         >
           <ExternalLink size={12} />
           Open
@@ -498,10 +498,10 @@ function ConnectProviderModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-dark-bg-2 border border-white/10 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
+      <div className="bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-[15px] font-semibold text-gray-100">Connect Storage</h2>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-100">
+          <h2 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Connect Storage</h2>
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-gray-100">
             <X size={16} />
           </button>
         </div>
@@ -514,10 +514,10 @@ function ConnectProviderModal({ onClose }: { onClose: () => void }) {
               key={type}
               onClick={() => connect(type)}
               disabled={!!loading}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-300 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-left"
             >
               <Cloud size={18} className={color} />
-              <span className="text-[13px] font-medium text-gray-100">{label}</span>
+              <span className="text-[13px] font-medium text-gray-900 dark:text-gray-100">{label}</span>
               {loading === type && <Loader size={14} className="ml-auto animate-spin text-gray-400" />}
             </button>
           ))}
@@ -615,8 +615,8 @@ export default function MediaPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Toolbar */}
-        <div className="flex items-center gap-3 px-6 py-4 border-b border-white/5 flex-shrink-0">
-          <h1 className="text-[15px] font-semibold text-gray-100">Media Library</h1>
+        <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200 dark:border-white/5 flex-shrink-0">
+          <h1 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Media Library</h1>
           <span className="text-[12px] text-gray-500">{total} assets</span>
 
           <div className="flex-1" />
@@ -629,7 +629,7 @@ export default function MediaPage() {
               placeholder="Search…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[13px] text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gjs-blue/50 w-48"
+              className="pl-8 pr-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[13px] text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gjs-blue/50 w-48"
             />
           </div>
 
@@ -637,7 +637,7 @@ export default function MediaPage() {
           <select
             value={fileTypeFilter}
             onChange={(e) => setFileTypeFilter(e.target.value)}
-            className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[13px] text-gray-300 focus:outline-none capitalize"
+            className="px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[13px] text-gray-700 dark:text-gray-300 focus:outline-none capitalize"
           >
             <option value="">All types</option>
             <option value="image">Images</option>
@@ -647,13 +647,13 @@ export default function MediaPage() {
           </select>
 
           {/* View toggle */}
-          <div className="flex rounded-lg overflow-hidden border border-white/10">
+          <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-white/10">
             {(['grid', 'list'] as const).map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
                 className={`p-1.5 transition-colors ${
-                  view === v ? 'bg-white/10 text-gray-100' : 'text-gray-400 hover:text-gray-200'
+                  view === v ? 'bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-gray-100' : 'text-gray-400 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
               >
                 {v === 'grid' ? <Grid size={14} /> : <List size={14} />}
@@ -663,14 +663,14 @@ export default function MediaPage() {
 
           <button
             onClick={refresh}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-100 hover:bg-white/5 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
             title="Refresh"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
 
           {/* Direct file upload */}
-          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-[13px] font-medium cursor-pointer transition-colors">
+          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-200 dark:bg-white/10 hover:bg-white/15 text-white text-[13px] font-medium cursor-pointer transition-colors">
             {uploading ? <Loader size={14} className="animate-spin" /> : <Plus size={14} />}
             {uploading ? 'Uploading…' : 'Upload'}
             <input
@@ -694,7 +694,7 @@ export default function MediaPage() {
                 Import
               </button>
               {showImportModal && (
-                <div className="absolute right-0 top-full mt-1 bg-dark-bg-2 border border-white/10 rounded-xl shadow-xl z-20 min-w-[180px] py-1">
+                <div className="absolute right-0 top-full mt-1 bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 rounded-xl shadow-xl z-20 min-w-[180px] py-1">
                   {providers.map((p) => (
                     <button
                       key={p.id}
@@ -702,7 +702,7 @@ export default function MediaPage() {
                         setBrowsing(p)
                         setShowImportModal(false)
                       }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] text-gray-200 hover:bg-white/5 text-left"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 text-left"
                     >
                       <Cloud size={13} className="text-gjs-blue" />
                       {p.label}
@@ -724,12 +724,12 @@ export default function MediaPage() {
 
         {/* Storage provider chips */}
         {providers.length > 0 && (
-          <div className="flex items-center gap-2 px-6 py-2 border-b border-white/5 flex-shrink-0">
+          <div className="flex items-center gap-2 px-6 py-2 border-b border-gray-200 dark:border-white/5 flex-shrink-0">
             <span className="text-[11px] text-gray-500 mr-1">Connected:</span>
             {providers.map((p) => (
               <span
                 key={p.id}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] text-gray-300"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[11px] text-gray-700 dark:text-gray-300"
               >
                 <Cloud size={10} className="text-gjs-blue" />
                 {p.label}
@@ -786,7 +786,7 @@ export default function MediaPage() {
 
           {view === 'list' && assets.length > 0 && (
             <div>
-              <div className="flex items-center gap-3 px-4 py-2 border-b border-white/5 text-[11px] text-gray-500 uppercase tracking-wider">
+              <div className="flex items-center gap-3 px-4 py-2 border-b border-gray-200 dark:border-white/5 text-[11px] text-gray-500 uppercase tracking-wider">
                 <div className="w-10" />
                 <div className="flex-1">Name</div>
                 <div className="hidden sm:block w-24 text-right">Type</div>

@@ -16,7 +16,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="w-full bg-dark-bg-3 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-gjs-blue/50 disabled:opacity-50"
+      className="w-full bg-light-bg-3 dark:bg-dark-bg-3 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gjs-blue/50 disabled:opacity-50"
     />
   )
 }
@@ -88,8 +88,8 @@ function ProfileTab() {
   return (
     <div className="space-y-6 max-w-lg">
       {/* Profile info */}
-      <div className="rounded-xl bg-dark-bg-2 border border-white/5 p-5">
-        <h3 className="text-[14px] font-semibold text-gray-100 mb-4">Profile information</h3>
+      <div className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 p-5">
+        <h3 className="text-[14px] font-semibold text-gray-900 dark:text-gray-100 mb-4">Profile information</h3>
         <form onSubmit={handleProfile} className="space-y-4">
           <div>
             <Label>Display name</Label>
@@ -111,8 +111,8 @@ function ProfileTab() {
       </div>
 
       {/* Change password */}
-      <div className="rounded-xl bg-dark-bg-2 border border-white/5 p-5">
-        <h3 className="text-[14px] font-semibold text-gray-100 mb-4 flex items-center gap-2">
+      <div className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 p-5">
+        <h3 className="text-[14px] font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
           <KeyRound size={14} className="text-gray-500" />
           Change password
         </h3>
@@ -209,7 +209,7 @@ function TeamTab() {
   const ROLE_BADGE: Record<string, string> = {
     admin: 'bg-gjs-blue/15 text-gjs-blue',
     manager: 'bg-yellow-400/10 text-yellow-400',
-    viewer: 'bg-white/5 text-gray-400',
+    viewer: 'bg-gray-100 dark:bg-white/5 text-gray-400',
   }
 
   return (
@@ -226,8 +226,8 @@ function TeamTab() {
       </div>
 
       {showInvite && (
-        <div className="rounded-xl bg-dark-bg-2 border border-white/10 p-5">
-          <h4 className="text-[14px] font-semibold text-gray-100 mb-4">New team member</h4>
+        <div className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 p-5">
+          <h4 className="text-[14px] font-semibold text-gray-900 dark:text-gray-100 mb-4">New team member</h4>
           <form onSubmit={handleInvite} className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -247,7 +247,7 @@ function TeamTab() {
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value as 'manager' | 'viewer')}
-                  className="w-full bg-dark-bg-3 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-gjs-blue/50"
+                  className="w-full bg-light-bg-3 dark:bg-dark-bg-3 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gjs-blue/50"
                 >
                   <option value="viewer">Viewer</option>
                   <option value="manager">Manager</option>
@@ -259,7 +259,7 @@ function TeamTab() {
             )}
             <div className="flex gap-2">
               <SaveBtn loading={inviting} label="Create user" />
-              <button type="button" onClick={() => setShowInvite(false)} className="px-4 py-2 rounded-lg text-[13px] text-gray-400 hover:bg-white/10 transition-colors">
+              <button type="button" onClick={() => setShowInvite(false)} className="px-4 py-2 rounded-lg text-[13px] text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">
                 Cancel
               </button>
             </div>
@@ -267,20 +267,20 @@ function TeamTab() {
         </div>
       )}
 
-      <div className="rounded-xl bg-dark-bg-2 border border-white/5 overflow-hidden">
+      <div className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 overflow-hidden">
         {loading ? (
           <p className="text-[13px] text-gray-600 py-8 text-center">Loading…</p>
         ) : (
           users.map((u, i) => (
             <div
               key={u.id}
-              className={`flex items-center gap-3 px-4 py-3 ${i < users.length - 1 ? 'border-b border-white/5' : ''}`}
+              className={`flex items-center gap-3 px-4 py-3 ${i < users.length - 1 ? 'border-b border-gray-200 dark:border-white/5' : ''}`}
             >
               <div className="w-8 h-8 rounded-full bg-gjs-blue/20 flex items-center justify-center text-gjs-blue text-[13px] font-bold flex-shrink-0">
                 {u.name.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium text-gray-100">{u.name}</p>
+                <p className="text-[13px] font-medium text-gray-900 dark:text-gray-100">{u.name}</p>
                 <p className="text-[12px] text-gray-500">{u.email}</p>
               </div>
               {u.id === currentUserId ? (
@@ -289,7 +289,7 @@ function TeamTab() {
                 <select
                   value={u.role}
                   onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                  className="bg-dark-bg-3 border border-white/10 rounded-lg px-2 py-1 text-[12px] text-gray-300 focus:outline-none focus:border-gjs-blue/50"
+                  className="bg-light-bg-3 dark:bg-dark-bg-3 border border-gray-300 dark:border-white/10 rounded-lg px-2 py-1 text-[12px] text-gray-700 dark:text-gray-300 focus:outline-none focus:border-gjs-blue/50"
                 >
                   <option value="admin">Admin</option>
                   <option value="manager">Manager</option>
@@ -346,8 +346,8 @@ function OrgTab() {
 
   return (
     <div className="space-y-4 max-w-lg">
-      <div className="rounded-xl bg-dark-bg-2 border border-white/5 p-5">
-        <h3 className="text-[14px] font-semibold text-gray-100 mb-4 flex items-center gap-2">
+      <div className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 p-5">
+        <h3 className="text-[14px] font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
           <Building2 size={14} className="text-gray-500" />
           Organization settings
         </h3>
@@ -401,12 +401,12 @@ export default function SettingsPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-100">Settings</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
         <p className="text-[13px] text-gray-500 mt-0.5">Manage your profile, team, and organization</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-dark-bg-2 rounded-lg p-1 w-fit border border-white/5 mb-6">
+      <div className="flex gap-1 bg-light-bg-2 dark:bg-dark-bg-2 rounded-lg p-1 w-fit border border-gray-200 dark:border-white/5 mb-6">
         {visibleTabs.map((t) => {
           const Icon = t.icon
           return (
@@ -414,7 +414,7 @@ export default function SettingsPage() {
               key={t.id}
               onClick={() => setTab(t.id)}
               className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-[13px] font-medium transition-colors ${
-                tab === t.id ? 'bg-gjs-blue/20 text-gjs-blue' : 'text-gray-500 hover:text-gray-300'
+                tab === t.id ? 'bg-gjs-blue/20 text-gjs-blue' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300'
               }`}
             >
               <Icon size={13} />

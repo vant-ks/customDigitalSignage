@@ -55,7 +55,7 @@ function DurationSlider({
         onChange={(e) => onChange(steps[parseInt(e.target.value)])}
         className="w-24 accent-gjs-blue"
       />
-      <span className="text-[12px] text-gray-300 w-10 text-right">{formatDuration(value)}</span>
+      <span className="text-[12px] text-gray-700 dark:text-gray-300 w-10 text-right">{formatDuration(value)}</span>
     </div>
   )
 }
@@ -79,14 +79,14 @@ function MediaPickerModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-dark-bg-2 border border-white/10 rounded-2xl w-full max-w-xl max-h-[70vh] flex flex-col shadow-2xl">
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
-          <p className="text-[14px] font-semibold text-gray-100 flex-1">Add Media</p>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-100">
+      <div className="bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 rounded-2xl w-full max-w-xl max-h-[70vh] flex flex-col shadow-2xl">
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-200 dark:border-white/5">
+          <p className="text-[14px] font-semibold text-gray-900 dark:text-gray-100 flex-1">Add Media</p>
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-gray-100">
             <X size={16} />
           </button>
         </div>
-        <div className="px-4 py-3 border-b border-white/5">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-white/5">
           <div className="relative">
             <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -94,7 +94,7 @@ function MediaPickerModal({
               placeholder="Search media…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[13px] text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gjs-blue/50"
+              className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[13px] text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gjs-blue/50"
             />
           </div>
         </div>
@@ -113,9 +113,9 @@ function MediaPickerModal({
               <button
                 key={asset.id}
                 onClick={() => onSelect(asset)}
-                className="w-full flex items-center gap-3 px-4 py-3 border-b border-white/5 hover:bg-white/5 text-left transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-white/5 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 text-left transition-colors"
               >
-                <div className="w-10 h-10 rounded-lg bg-dark-bg-3 flex-shrink-0 overflow-hidden">
+                <div className="w-10 h-10 rounded-lg bg-light-bg-3 dark:bg-dark-bg-3 flex-shrink-0 overflow-hidden">
                   {asset.thumbnail_url ? (
                     <img
                       src={asset.thumbnail_url}
@@ -129,7 +129,7 @@ function MediaPickerModal({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-medium text-gray-100 truncate">{asset.name}</p>
+                  <p className="text-[13px] font-medium text-gray-900 dark:text-gray-100 truncate">{asset.name}</p>
                   <p className="text-[11px] text-gray-500 capitalize">
                     {asset.file_type.replace('_', ' ')}
                     {asset.duration_sec ? ` · ${formatDuration(asset.duration_sec)}` : ''}
@@ -171,7 +171,7 @@ function PlaylistItemRow({
 
   return (
     <div
-      className={`border-b border-white/5 transition-colors ${isDragOver ? 'bg-gjs-blue/10 border-gjs-blue/30' : ''}`}
+      className={`border-b border-gray-200 dark:border-white/5 transition-colors ${isDragOver ? 'bg-gjs-blue/10 border-gjs-blue/30' : ''}`}
       draggable
       onDragStart={() => onDragStart(index)}
       onDragOver={(e) => { e.preventDefault(); onDragOver(index) }}
@@ -189,7 +189,7 @@ function PlaylistItemRow({
         </span>
 
         {/* Thumbnail */}
-        <div className="w-8 h-8 rounded overflow-hidden bg-dark-bg-3 flex-shrink-0">
+        <div className="w-8 h-8 rounded overflow-hidden bg-light-bg-3 dark:bg-dark-bg-3 flex-shrink-0">
           {(item as any).media?.thumbnail_url ? (
             <img
               src={(item as any).media.thumbnail_url}
@@ -205,7 +205,7 @@ function PlaylistItemRow({
 
         {/* Name */}
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] text-gray-100 truncate">
+          <p className="text-[13px] text-gray-900 dark:text-gray-100 truncate">
             {(item as any).media?.name ?? item.media_id}
           </p>
           <p className="text-[11px] text-gray-500">
@@ -223,7 +223,7 @@ function PlaylistItemRow({
         {/* Expand / remove */}
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="p-1 text-gray-500 hover:text-gray-300 transition-colors"
+          className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
         >
           {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
@@ -243,7 +243,7 @@ function PlaylistItemRow({
             <select
               value={item.transition_type ?? ''}
               onChange={(e) => onUpdate(item.id, { transition_type: e.target.value || null })}
-              className="mt-1 w-full px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[12px] text-gray-300 focus:outline-none"
+              className="mt-1 w-full px-2 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[12px] text-gray-700 dark:text-gray-300 focus:outline-none"
             >
               <option value="">Use playlist default</option>
               <option value="cut">Cut</option>
@@ -260,7 +260,7 @@ function PlaylistItemRow({
               max={100}
               value={item.weight}
               onChange={(e) => onUpdate(item.id, { weight: parseInt(e.target.value) || 1 })}
-              className="mt-1 w-full px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[12px] text-gray-300 focus:outline-none"
+              className="mt-1 w-full px-2 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[12px] text-gray-700 dark:text-gray-300 focus:outline-none"
             />
           </div>
         </div>
@@ -285,9 +285,9 @@ function PlaylistListPanel({
   loading: boolean
 }) {
   return (
-    <div className="w-64 flex-shrink-0 border-r border-white/5 flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-        <p className="text-[13px] font-semibold text-gray-100">Playlists</p>
+    <div className="w-64 flex-shrink-0 border-r border-gray-200 dark:border-white/5 flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-white/5">
+        <p className="text-[13px] font-semibold text-gray-900 dark:text-gray-100">Playlists</p>
         <button
           onClick={onCreate}
           className="p-1.5 rounded-lg bg-gjs-blue text-white hover:bg-gjs-blue/80 transition-colors"
@@ -308,13 +308,13 @@ function PlaylistListPanel({
             <button
               key={p.id}
               onClick={() => onSelect(p)}
-              className={`w-full flex items-start gap-2.5 px-4 py-3 border-b border-white/5 text-left transition-colors ${
+              className={`w-full flex items-start gap-2.5 px-4 py-3 border-b border-gray-200 dark:border-white/5 text-left transition-colors ${
                 activeId === p.id ? 'bg-gjs-blue/10 border-l-2 border-l-gjs-blue' : 'hover:bg-white/[0.03]'
               }`}
             >
               <ModeIcon size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
               <div className="min-w-0">
-                <p className="text-[13px] font-medium text-gray-100 truncate">{p.name}</p>
+                <p className="text-[13px] font-medium text-gray-900 dark:text-gray-100 truncate">{p.name}</p>
                 <p className="text-[11px] text-gray-500">
                   {p.items?.length ?? 0} items
                   {p.items?.length
@@ -350,10 +350,10 @@ function CreatePlaylistModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-dark-bg-2 border border-white/10 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
+      <div className="bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 rounded-2xl w-full max-w-sm p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-[15px] font-semibold text-gray-100">New Playlist</h2>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-100">
+          <h2 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">New Playlist</h2>
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-gray-100">
             <X size={16} />
           </button>
         </div>
@@ -366,7 +366,7 @@ function CreatePlaylistModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Lobby Loop"
-              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-[13px] text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gjs-blue/50"
+              className="w-full px-3 py-2 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[13px] text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gjs-blue/50"
               onKeyDown={(e) => e.key === 'Enter' && name.trim() && onCreate(name.trim(), playMode)}
             />
           </div>
@@ -375,7 +375,7 @@ function CreatePlaylistModal({
             <select
               value={playMode}
               onChange={(e) => setPlayMode(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-[13px] text-gray-300 focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[13px] text-gray-700 dark:text-gray-300 focus:outline-none"
             >
               <option value="sequential">Sequential</option>
               <option value="shuffle">Shuffle</option>
@@ -386,7 +386,7 @@ function CreatePlaylistModal({
         <div className="flex gap-2 mt-6">
           <button
             onClick={onClose}
-            className="flex-1 py-2 rounded-lg border border-white/10 text-[13px] text-gray-400 hover:bg-white/5 transition-colors"
+            className="flex-1 py-2 rounded-lg border border-gray-300 dark:border-white/10 text-[13px] text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
           >
             Cancel
           </button>
@@ -459,9 +459,9 @@ function PlaylistBuilder({ playlist }: { playlist: Playlist }) {
   return (
     <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
       {/* Builder header */}
-      <div className="flex items-center gap-3 px-5 py-3 border-b border-white/5 flex-shrink-0">
+      <div className="flex items-center gap-3 px-5 py-3 border-b border-gray-200 dark:border-white/5 flex-shrink-0">
         <div className="flex-1 min-w-0">
-          <h2 className="text-[14px] font-semibold text-gray-100 truncate">{playlist.name}</h2>
+          <h2 className="text-[14px] font-semibold text-gray-900 dark:text-gray-100 truncate">{playlist.name}</h2>
           <p className="text-[11px] text-gray-500">
             {items.length} items · {formatDuration(totalDuration)} total
             {!playlist.is_active && ' · inactive'}
@@ -472,7 +472,7 @@ function PlaylistBuilder({ playlist }: { playlist: Playlist }) {
         <select
           value={playlist.play_mode}
           onChange={(e) => updatePlaylist(playlist.id, { play_mode: e.target.value as PlayMode })}
-          className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[12px] text-gray-300 focus:outline-none"
+          className="px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-[12px] text-gray-700 dark:text-gray-300 focus:outline-none"
         >
           <option value="sequential">Sequential</option>
           <option value="shuffle">Shuffle</option>
@@ -533,7 +533,7 @@ function PlaylistBuilder({ playlist }: { playlist: Playlist }) {
       </div>
 
       {/* Footer */}
-      <div className="px-5 py-3 border-t border-white/5 flex items-center gap-3 flex-shrink-0">
+      <div className="px-5 py-3 border-t border-gray-200 dark:border-white/5 flex items-center gap-3 flex-shrink-0">
         <button
           onClick={() => setMediaPickerOpen(true)}
           className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gjs-blue text-white text-[13px] font-medium hover:bg-gjs-blue/80 transition-colors"
@@ -543,7 +543,7 @@ function PlaylistBuilder({ playlist }: { playlist: Playlist }) {
         </button>
         {items.length > 0 && (
           <p className="text-[12px] text-gray-500 ml-auto">
-            Total runtime: <span className="text-gray-300">{formatDuration(totalDuration)}</span>
+            Total runtime: <span className="text-gray-700 dark:text-gray-300">{formatDuration(totalDuration)}</span>
           </p>
         )}
       </div>

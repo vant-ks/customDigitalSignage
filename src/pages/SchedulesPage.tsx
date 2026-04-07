@@ -139,10 +139,10 @@ function CreateScheduleDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-md rounded-xl bg-dark-bg-2 border border-white/10 shadow-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
-          <h2 className="text-[14px] font-semibold text-gray-100">New Schedule</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-300"><X size={16} /></button>
+      <div className="w-full max-w-md rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 shadow-2xl">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
+          <h2 className="text-[14px] font-semibold text-gray-900 dark:text-gray-100">New Schedule</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300"><X size={16} /></button>
         </div>
         <div className="px-5 py-4 space-y-4">
           {err && <p className="text-[12px] text-red-400">{err}</p>}
@@ -153,7 +153,7 @@ function CreateScheduleDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Morning loop, Evening content…"
-              className="w-full bg-dark-bg-1 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-gjs-blue/50"
+              className="w-full bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gjs-blue/50"
             />
           </div>
 
@@ -162,7 +162,7 @@ function CreateScheduleDialog({
             <select
               value={playlistId}
               onChange={(e) => setPlaylistId(e.target.value)}
-              className="w-full bg-dark-bg-1 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-gjs-blue/50"
+              className="w-full bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gjs-blue/50"
             >
               <option value="">— select playlist —</option>
               {playlists.map((p) => (
@@ -181,7 +181,7 @@ function CreateScheduleDialog({
                   className={`flex-1 py-1.5 rounded-lg text-[12px] font-medium border transition-colors ${
                     scheduleType === t
                       ? 'bg-gjs-blue/20 border-gjs-blue/50 text-gjs-blue'
-                      : 'border-white/10 text-gray-400 hover:border-white/20'
+                      : 'border-gray-300 dark:border-white/10 text-gray-400 hover:border-gray-400 dark:hover:border-gray-400 dark:hover:border-white/20'
                   }`}
                 >
                   {t === 'one_time' ? 'One-time' : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -201,7 +201,7 @@ function CreateScheduleDialog({
                     className={`flex-1 py-1 rounded text-[11px] font-medium border transition-colors ${
                       days.includes(i)
                         ? 'bg-gjs-blue/20 border-gjs-blue/50 text-gjs-blue'
-                        : 'border-white/10 text-gray-500 hover:border-white/20'
+                        : 'border-gray-300 dark:border-white/10 text-gray-500 hover:border-gray-400 dark:hover:border-gray-400 dark:hover:border-white/20'
                     }`}
                   >
                     {d}
@@ -219,7 +219,7 @@ function CreateScheduleDialog({
                   type="time"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full bg-dark-bg-1 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-gjs-blue/50"
+                  className="w-full bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gjs-blue/50"
                 />
               </div>
               <div className="flex-1">
@@ -228,7 +228,7 @@ function CreateScheduleDialog({
                   type="time"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full bg-dark-bg-1 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-gjs-blue/50"
+                  className="w-full bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gjs-blue/50"
                 />
               </div>
             </div>
@@ -246,8 +246,8 @@ function CreateScheduleDialog({
           </div>
         </div>
 
-        <div className="px-5 py-3 border-t border-white/5 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-1.5 text-[13px] text-gray-400 hover:text-gray-200 transition-colors">
+        <div className="px-5 py-3 border-t border-gray-200 dark:border-white/5 flex justify-end gap-2">
+          <button onClick={onClose} className="px-4 py-1.5 text-[13px] text-gray-400 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
             Cancel
           </button>
           <button
@@ -298,13 +298,13 @@ function OverrideDialog({ onClose, onCreated }: { onClose: () => void; onCreated
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-sm rounded-xl bg-dark-bg-2 border border-red-500/30 shadow-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+      <div className="w-full max-w-sm rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-red-500/30 shadow-2xl">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/5">
           <div className="flex items-center gap-2">
             <Zap size={14} className="text-red-400" />
-            <h2 className="text-[14px] font-semibold text-gray-100">Emergency Override</h2>
+            <h2 className="text-[14px] font-semibold text-gray-900 dark:text-gray-100">Emergency Override</h2>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-300"><X size={16} /></button>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300"><X size={16} /></button>
         </div>
         <div className="px-5 py-4 space-y-4">
           <p className="text-[12px] text-gray-400">
@@ -317,7 +317,7 @@ function OverrideDialog({ onClose, onCreated }: { onClose: () => void; onCreated
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full bg-dark-bg-1 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-red-400/50"
+              className="w-full bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-red-400/50"
             />
           </div>
           <div>
@@ -325,7 +325,7 @@ function OverrideDialog({ onClose, onCreated }: { onClose: () => void; onCreated
             <select
               value={playlistId}
               onChange={(e) => setPlaylistId(e.target.value)}
-              className="w-full bg-dark-bg-1 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-red-400/50"
+              className="w-full bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-red-400/50"
             >
               <option value="">— select —</option>
               {playlists.map((p) => (
@@ -340,12 +340,12 @@ function OverrideDialog({ onClose, onCreated }: { onClose: () => void; onCreated
               value={expireMinutes}
               onChange={(e) => setExpireMinutes(e.target.value ? Number(e.target.value) : '')}
               placeholder="e.g. 60"
-              className="w-full bg-dark-bg-1 border border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-100 focus:outline-none focus:border-red-400/50"
+              className="w-full bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[13px] text-gray-900 dark:text-gray-100 focus:outline-none focus:border-red-400/50"
             />
           </div>
         </div>
-        <div className="px-5 py-3 border-t border-white/5 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-1.5 text-[13px] text-gray-400 hover:text-gray-200 transition-colors">
+        <div className="px-5 py-3 border-t border-gray-200 dark:border-white/5 flex justify-end gap-2">
+          <button onClick={onClose} className="px-4 py-1.5 text-[13px] text-gray-400 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
             Cancel
           </button>
           <button
@@ -395,7 +395,7 @@ export default function SchedulesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[18px] font-semibold text-gray-100">Schedules</h1>
+          <h1 className="text-[18px] font-semibold text-gray-900 dark:text-gray-100">Schedules</h1>
           <p className="text-[13px] text-gray-500 mt-0.5">
             {schedules.length} schedule{schedules.length !== 1 ? 's' : ''} configured
           </p>
@@ -441,37 +441,37 @@ export default function SchedulesPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => setWeekStart((w) => addDays(w, -7))}
-          className="p-1.5 rounded-md text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-colors"
+          className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
         >
           <ChevronLeft size={16} />
         </button>
-        <span className="text-[13px] text-gray-300 font-medium min-w-[160px] text-center">
+        <span className="text-[13px] text-gray-700 dark:text-gray-300 font-medium min-w-[160px] text-center">
           {fmtDate(weekStart)} – {fmtDate(addDays(weekStart, 6))}
         </span>
         <button
           onClick={() => setWeekStart((w) => addDays(w, 7))}
-          className="p-1.5 rounded-md text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-colors"
+          className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
         >
           <ChevronRight size={16} />
         </button>
         <button
           onClick={() => setWeekStart(getWeekStart(new Date()))}
-          className="ml-2 px-3 py-1 rounded-md text-[12px] text-gray-400 border border-white/10 hover:border-white/20 hover:text-gray-200 transition-colors"
+          className="ml-2 px-3 py-1 rounded-md text-[12px] text-gray-400 border border-gray-300 dark:border-white/10 hover:border-gray-400 dark:hover:border-gray-400 dark:hover:border-white/20 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
         >
           Today
         </button>
       </div>
 
       {/* Calendar grid */}
-      <div className="rounded-xl border border-white/5 overflow-hidden">
+      <div className="rounded-xl border border-gray-200 dark:border-white/5 overflow-hidden">
         {/* Column headers */}
-        <div className="grid grid-cols-7 border-b border-white/5 bg-dark-bg-2">
+        <div className="grid grid-cols-7 border-b border-gray-200 dark:border-white/5 bg-light-bg-2 dark:bg-dark-bg-2">
           {weekDays.map((d, i) => {
             const isToday = d.getTime() === today.getTime()
             return (
               <div
                 key={i}
-                className={`px-2 py-2.5 text-center border-r last:border-r-0 border-white/5 ${
+                className={`px-2 py-2.5 text-center border-r last:border-r-0 border-gray-200 dark:border-white/5 ${
                   isToday ? 'bg-gjs-blue/10' : ''
                 }`}
               >
@@ -495,8 +495,8 @@ export default function SchedulesPage() {
             return (
               <div
                 key={dayIdx}
-                className={`p-1.5 space-y-1 border-r last:border-r-0 border-white/5 min-h-[160px] ${
-                  isToday ? 'bg-gjs-blue/5' : 'bg-dark-bg-1 hover:bg-white/[0.02]'
+                className={`p-1.5 space-y-1 border-r last:border-r-0 border-gray-200 dark:border-white/5 min-h-[160px] ${
+                  isToday ? 'bg-gjs-blue/5' : 'bg-light-bg-1 dark:bg-dark-bg-1 hover:bg-gray-50 dark:hover:bg-gray-50 dark:hover:bg-white/[0.02]'
                 } transition-colors cursor-pointer`}
                 onClick={() => { setCreateDayIndex(dayIdx); setShowCreate(true) }}
               >
@@ -522,19 +522,19 @@ export default function SchedulesPage() {
 
       {/* All schedules list */}
       <div>
-        <h2 className="text-[14px] font-semibold text-gray-300 mb-3">All Schedules</h2>
+        <h2 className="text-[14px] font-semibold text-gray-700 dark:text-gray-300 mb-3">All Schedules</h2>
         {loading ? (
           <p className="text-[13px] text-gray-500">Loading…</p>
         ) : schedules.length === 0 ? (
-          <div className="rounded-xl border border-white/5 bg-dark-bg-2 px-6 py-10 text-center">
+          <div className="rounded-xl border border-gray-200 dark:border-white/5 bg-light-bg-2 dark:bg-dark-bg-2 px-6 py-10 text-center">
             <p className="text-[14px] text-gray-400">No schedules yet</p>
             <p className="text-[13px] text-gray-600 mt-1">Create a schedule to assign playlists to your displays</p>
           </div>
         ) : (
-          <div className="rounded-xl border border-white/5 overflow-hidden">
+          <div className="rounded-xl border border-gray-200 dark:border-white/5 overflow-hidden">
             <table className="w-full text-[13px]">
               <thead>
-                <tr className="border-b border-white/5 bg-dark-bg-2">
+                <tr className="border-b border-gray-200 dark:border-white/5 bg-light-bg-2 dark:bg-dark-bg-2">
                   <th className="text-left px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Name</th>
                   <th className="text-left px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Playlist</th>
                   <th className="text-left px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-gray-500">Type</th>
@@ -548,8 +548,8 @@ export default function SchedulesPage() {
                 {schedules.map((s) => {
                   const cls = TYPE_COLORS[s.schedule_type] ?? TYPE_COLORS.always
                   return (
-                    <tr key={s.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                      <td className="px-4 py-3 text-gray-200 font-medium">
+                    <tr key={s.id} className="border-b border-gray-200 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                      <td className="px-4 py-3 text-gray-800 dark:text-gray-200 font-medium">
                         <div className="flex items-center gap-2">
                           {s.is_override && <Zap size={11} className="text-red-400 flex-shrink-0" />}
                           {s.name}
@@ -609,11 +609,11 @@ export default function SchedulesPage() {
       {/* Delete confirmation */}
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-sm rounded-xl bg-dark-bg-2 border border-white/10 shadow-2xl p-6 space-y-4">
-            <h2 className="text-[14px] font-semibold text-gray-100">Delete schedule?</h2>
+          <div className="w-full max-w-sm rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 shadow-2xl p-6 space-y-4">
+            <h2 className="text-[14px] font-semibold text-gray-900 dark:text-gray-100">Delete schedule?</h2>
             <p className="text-[13px] text-gray-400">This will remove the schedule immediately. Active displays will pick up the change on their next manifest sync.</p>
             <div className="flex justify-end gap-2 pt-2">
-              <button onClick={() => setConfirmDelete(null)} className="px-4 py-1.5 text-[13px] text-gray-400 hover:text-gray-200">
+              <button onClick={() => setConfirmDelete(null)} className="px-4 py-1.5 text-[13px] text-gray-400 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200">
                 Cancel
               </button>
               <button

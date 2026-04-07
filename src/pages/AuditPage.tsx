@@ -74,7 +74,7 @@ export default function AuditPage() {
     <div className="p-6 max-w-6xl mx-auto space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-gray-100">Audit Log</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Audit Log</h1>
         <p className="text-[13px] text-gray-500 mt-0.5">
           {total > 0 ? `${total.toLocaleString()} events` : 'All admin and manager actions'}
         </p>
@@ -83,7 +83,7 @@ export default function AuditPage() {
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <select
-          className="bg-dark-bg-2 border border-white/10 rounded-lg px-3 py-1.5 text-[13px] text-gray-300 focus:outline-none focus:border-gjs-blue/50"
+          className="bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-1.5 text-[13px] text-gray-700 dark:text-gray-300 focus:outline-none focus:border-gjs-blue/50"
           value={entityType}
           onChange={(e) => setEntityType(e.target.value)}
         >
@@ -99,7 +99,7 @@ export default function AuditPage() {
           <label className="text-[12px] text-gray-500">From</label>
           <input
             type="date"
-            className="bg-dark-bg-2 border border-white/10 rounded-lg px-3 py-1.5 text-[13px] text-gray-300 focus:outline-none focus:border-gjs-blue/50"
+            className="bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-1.5 text-[13px] text-gray-700 dark:text-gray-300 focus:outline-none focus:border-gjs-blue/50"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
           />
@@ -108,7 +108,7 @@ export default function AuditPage() {
           <label className="text-[12px] text-gray-500">To</label>
           <input
             type="date"
-            className="bg-dark-bg-2 border border-white/10 rounded-lg px-3 py-1.5 text-[13px] text-gray-300 focus:outline-none focus:border-gjs-blue/50"
+            className="bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-1.5 text-[13px] text-gray-700 dark:text-gray-300 focus:outline-none focus:border-gjs-blue/50"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
           />
@@ -116,7 +116,7 @@ export default function AuditPage() {
         {(entityType || fromDate || toDate) && (
           <button
             onClick={() => { setEntityType(''); setFromDate(''); setToDate('') }}
-            className="px-3 py-1.5 rounded-lg text-[13px] text-gray-500 hover:text-gray-300 hover:bg-white/5 transition-colors"
+            className="px-3 py-1.5 rounded-lg text-[13px] text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
           >
             Clear filters
           </button>
@@ -124,7 +124,7 @@ export default function AuditPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl bg-dark-bg-2 border border-white/5 overflow-hidden">
+      <div className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 overflow-hidden">
         {error && (
           <div className="px-4 py-3 bg-red-500/10 border-b border-red-500/20 text-[13px] text-red-400">
             {error}
@@ -141,7 +141,7 @@ export default function AuditPage() {
         ) : (
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-white/5 text-gray-500 text-[11px] uppercase tracking-wider">
+              <tr className="border-b border-gray-200 dark:border-white/5 text-gray-500 text-[11px] uppercase tracking-wider">
                 <th className="text-left px-4 py-2.5 font-medium">Time</th>
                 <th className="text-left px-4 py-2.5 font-medium">Action</th>
                 <th className="text-left px-4 py-2.5 font-medium">Entity</th>
@@ -153,7 +153,7 @@ export default function AuditPage() {
               {logs.map((log) => (
                 <tr
                   key={log.id}
-                  className="border-b border-white/5 hover:bg-dark-bg-3 transition-colors"
+                  className="border-b border-gray-200 dark:border-white/5 hover:bg-light-bg-3 dark:hover:bg-light-bg-3 dark:hover:bg-dark-bg-3 transition-colors"
                 >
                   <td className="px-4 py-2.5 text-gray-500 whitespace-nowrap">
                     {fmt(log.created_at)}
@@ -190,7 +190,7 @@ export default function AuditPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-white/5">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-white/5">
             <p className="text-[12px] text-gray-600">
               Page {page} of {totalPages}
             </p>
@@ -198,14 +198,14 @@ export default function AuditPage() {
               <button
                 onClick={() => goPage(page - 1)}
                 disabled={page <= 1}
-                className="p-1.5 rounded text-gray-500 hover:text-gray-200 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-1.5 rounded text-gray-500 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft size={14} />
               </button>
               <button
                 onClick={() => goPage(page + 1)}
                 disabled={page >= totalPages}
-                className="p-1.5 rounded text-gray-500 hover:text-gray-200 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-1.5 rounded text-gray-500 hover:text-gray-800 dark:hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight size={14} />
               </button>

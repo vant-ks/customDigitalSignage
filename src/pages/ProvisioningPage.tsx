@@ -112,7 +112,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="ml-2 rounded p-1 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+      className="ml-2 rounded p-1 text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-200 dark:hover:bg-white/10 hover:text-white transition-colors"
       title="Copy"
     >
       {copied ? <CheckCircle size={14} className="text-green-400" /> : <Copy size={14} />}
@@ -230,7 +230,7 @@ export default function ProvisioningPage() {
           value={form.display_name}
           onChange={(e) => set('display_name', e.target.value)}
           placeholder="e.g. Lobby South Screen"
-          className="w-full rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:border-gjs-blue/50 focus:outline-none focus:ring-1 focus:ring-gjs-blue/30"
+          className="w-full rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:border-gjs-blue/50 focus:outline-none focus:ring-1 focus:ring-gjs-blue/30"
         />
       </div>
       <div>
@@ -238,7 +238,7 @@ export default function ProvisioningPage() {
         <select
           value={form.group_id}
           onChange={(e) => set('group_id', e.target.value)}
-          className="w-full rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
+          className="w-full rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
         >
           <option value="">— No group —</option>
           {groups.map((g) => (
@@ -254,7 +254,7 @@ export default function ProvisioningPage() {
           value={form.location_name}
           onChange={(e) => set('location_name', e.target.value)}
           placeholder="e.g. Building A, Floor 2"
-          className="w-full rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:border-gjs-blue/50 focus:outline-none"
+          className="w-full rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:border-gjs-blue/50 focus:outline-none"
         />
       </div>
       <div>
@@ -263,7 +263,7 @@ export default function ProvisioningPage() {
           value={form.tags}
           onChange={(e) => set('tags', e.target.value)}
           placeholder="indoor, retail, kiosk"
-          className="w-full rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 focus:border-gjs-blue/50 focus:outline-none"
+          className="w-full rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:border-gjs-blue/50 focus:outline-none"
         />
       </div>
     </div>
@@ -278,7 +278,7 @@ export default function ProvisioningPage() {
           className={`flex flex-col gap-1 rounded-xl border p-4 text-left transition-all ${
             form.hardware_type === hw.value
               ? 'border-gjs-blue bg-gjs-blue/10 text-white'
-              : 'border-white/8 bg-dark-bg-1 text-gray-300 hover:border-white/20'
+              : 'border-gray-200 dark:border-white/8 bg-light-bg-1 dark:bg-dark-bg-1 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-400 dark:hover:border-white/20'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -298,7 +298,7 @@ export default function ProvisioningPage() {
         <select
           value={form.resolution_preset}
           onChange={(e) => handleResolutionPreset(e.target.value)}
-          className="w-full rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
+          className="w-full rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
         >
           {RESOLUTION_PRESETS.map((p) => (
             <option key={p.label} value={p.label}>
@@ -313,14 +313,14 @@ export default function ProvisioningPage() {
               value={form.resolution_w}
               onChange={(e) => set('resolution_w', Number(e.target.value))}
               placeholder="Width"
-              className="w-1/2 rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
+              className="w-1/2 rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
             />
             <input
               type="number"
               value={form.resolution_h}
               onChange={(e) => set('resolution_h', Number(e.target.value))}
               placeholder="Height"
-              className="w-1/2 rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
+              className="w-1/2 rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
             />
           </div>
         )}
@@ -335,7 +335,7 @@ export default function ProvisioningPage() {
               className={`flex-1 rounded-lg border py-2 text-sm font-medium capitalize transition-all ${
                 form.orientation === o
                   ? 'border-gjs-blue bg-gjs-blue/10 text-white'
-                  : 'border-white/10 bg-dark-bg-1 text-gray-400 hover:border-white/20'
+                  : 'border-gray-300 dark:border-white/10 bg-light-bg-1 dark:bg-dark-bg-1 text-gray-400 hover:border-gray-400 dark:hover:border-gray-400 dark:hover:border-white/20'
               }`}
             >
               {o}
@@ -372,7 +372,7 @@ export default function ProvisioningPage() {
         <select
           value={form.cache_fallback}
           onChange={(e) => set('cache_fallback', e.target.value)}
-          className="w-full rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
+          className="w-full rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
         >
           {FALLBACK_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -386,7 +386,7 @@ export default function ProvisioningPage() {
         <select
           value={form.expires_hours}
           onChange={(e) => set('expires_hours', Number(e.target.value))}
-          className="w-full rounded-lg bg-dark-bg-1 border border-white/10 px-3 py-2 text-sm text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
+          className="w-full rounded-lg bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-gjs-blue/50 focus:outline-none"
         >
           <option value={24}>24 hours</option>
           <option value={48}>48 hours</option>
@@ -400,7 +400,7 @@ export default function ProvisioningPage() {
   const renderStep4 = () => (
     <div className="space-y-4 text-sm">
       <h3 className="text-base font-semibold text-white">Review before generating</h3>
-      <div className="rounded-xl bg-dark-bg-1 border border-white/8 divide-y divide-white/5">
+      <div className="rounded-xl bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-200 dark:border-white/8 divide-y divide-gray-200 dark:divide-white/5">
         {[
           ['Display Name', form.display_name],
           ['Group', groups.find((g) => g.id === form.group_id)?.name || '—'],
@@ -415,7 +415,7 @@ export default function ProvisioningPage() {
         ].map(([label, value]) => (
           <div key={label} className="flex justify-between px-4 py-2.5">
             <span className="text-gray-500">{label}</span>
-            <span className="text-gray-200 font-medium">{value}</span>
+            <span className="text-gray-800 dark:text-gray-200 font-medium">{value}</span>
           </div>
         ))}
       </div>
@@ -449,7 +449,7 @@ export default function ProvisioningPage() {
           <label className="block text-xs text-gray-500 mb-1 uppercase tracking-widest">
             Provisioning Token
           </label>
-          <div className="flex items-center gap-2 rounded-xl bg-dark-bg-1 border border-white/10 px-4 py-3">
+          <div className="flex items-center gap-2 rounded-xl bg-light-bg-1 dark:bg-dark-bg-1 border border-gray-300 dark:border-white/10 px-4 py-3">
             <code className="flex-1 text-sm text-gjs-blue font-mono break-all">
               {createdToken.token}
             </code>
@@ -460,7 +460,7 @@ export default function ProvisioningPage() {
         {/* Expiry notice */}
         <p className="text-xs text-gray-500">
           Expires{' '}
-          <span className="text-gray-300">
+          <span className="text-gray-700 dark:text-gray-300">
             {new Date(createdToken.expires_at).toLocaleString()}
           </span>
           . Single-use — consumed on first device registration.
@@ -482,7 +482,7 @@ export default function ProvisioningPage() {
 
         <button
           onClick={handleReset}
-          className="w-full rounded-xl border border-white/10 px-4 py-2.5 text-sm text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
+          className="w-full rounded-xl border border-gray-300 dark:border-white/10 px-4 py-2.5 text-sm text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 hover:text-white transition-colors"
         >
           Provision another display
         </button>
@@ -504,10 +504,10 @@ export default function ProvisioningPage() {
       </div>
 
       {/* Wizard card */}
-      <div className="rounded-2xl bg-dark-bg-2 border border-white/5 overflow-hidden">
+      <div className="rounded-2xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 overflow-hidden">
         {/* Steps bar (hidden on success) */}
         {step < 5 && (
-          <div className="flex border-b border-white/5">
+          <div className="flex border-b border-gray-200 dark:border-white/5">
             {STEPS.map((label, i) => (
               <div
                 key={label}
@@ -539,11 +539,11 @@ export default function ProvisioningPage() {
 
         {/* Footer nav (hidden on success) */}
         {step < 5 && (
-          <div className="flex justify-between gap-3 border-t border-white/5 px-6 py-4">
+          <div className="flex justify-between gap-3 border-t border-gray-200 dark:border-white/5 px-6 py-4">
             <button
               onClick={() => setStep((s) => Math.max(0, s - 1))}
               disabled={step === 0}
-              className="rounded-lg border border-white/10 px-4 py-2 text-sm text-gray-400 hover:bg-white/5 disabled:opacity-30 transition-colors"
+              className="rounded-lg border border-gray-300 dark:border-white/10 px-4 py-2 text-sm text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 disabled:opacity-30 transition-colors"
             >
               Back
             </button>
@@ -570,13 +570,13 @@ export default function ProvisioningPage() {
       </div>
 
       {/* Token history */}
-      <div className="rounded-2xl bg-dark-bg-2 border border-white/5 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+      <div className="rounded-2xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-white/5">
           <h2 className="text-sm font-semibold text-white">Token History</h2>
           <button
             onClick={() => fetchTokens()}
             disabled={loading}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
+            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5 hover:text-white transition-colors"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
@@ -594,16 +594,16 @@ export default function ProvisioningPage() {
             No provisioning tokens yet. Generate one above to get started.
           </div>
         ) : (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-gray-200 dark:divide-white/5">
             {tokens.map((token) => (
               <div
                 key={token.id}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-white/2 transition-colors"
+                className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-50 dark:hover:bg-white/2 transition-colors"
               >
                 {/* Token string */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <code className="text-xs font-mono text-gray-300 truncate max-w-xs">
+                    <code className="text-xs font-mono text-gray-700 dark:text-gray-300 truncate max-w-xs">
                       {token.token}
                     </code>
                     <CopyButton text={token.token} />

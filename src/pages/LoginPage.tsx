@@ -27,7 +27,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dark-bg-1 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-light-bg-1 dark:bg-dark-bg-1 px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
@@ -36,15 +36,15 @@ export default function LoginPage() {
           </div>
           <div className="flex flex-col leading-tight">
             <span className="text-[11px] text-gray-500 uppercase tracking-widest">VANT</span>
-            <span className="text-[18px] font-semibold text-gray-100 leading-tight">Signage</span>
+            <span className="text-[18px] font-semibold text-gray-900 dark:text-gray-100 leading-tight">Signage</span>
           </div>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-dark-bg-2 rounded-xl border border-white/5 p-7 space-y-4"
+          className="bg-light-bg-2 dark:bg-dark-bg-2 rounded-xl border border-gray-200 dark:border-white/5 p-7 space-y-4"
         >
-          <h1 className="text-[15px] font-semibold text-gray-100 mb-2">Sign in to your account</h1>
+          <h1 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-2">Sign in to your account</h1>
 
           {error && (
             <div className="rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-[13px] px-3 py-2">
@@ -64,7 +64,7 @@ export default function LoginPage() {
               value={orgSlug}
               onChange={(e) => setOrgSlug(e.target.value)}
               placeholder="your-org-slug"
-              className="w-full rounded-md bg-dark-bg-3 border border-white/10 text-[13px] text-gray-100 placeholder-gray-600 px-3 py-2 outline-none focus:border-gjs-blue focus:ring-1 focus:ring-gjs-blue transition"
+              className="w-full rounded-md bg-light-bg-3 dark:bg-dark-bg-3 border border-gray-300 dark:border-white/10 text-[13px] text-gray-900 dark:text-gray-100 placeholder-gray-600 px-3 py-2 outline-none focus:border-gjs-blue focus:ring-1 focus:ring-gjs-blue transition"
             />
           </div>
 
@@ -80,7 +80,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full rounded-md bg-dark-bg-3 border border-white/10 text-[13px] text-gray-100 placeholder-gray-600 px-3 py-2 outline-none focus:border-gjs-blue focus:ring-1 focus:ring-gjs-blue transition"
+              className="w-full rounded-md bg-light-bg-3 dark:bg-dark-bg-3 border border-gray-300 dark:border-white/10 text-[13px] text-gray-900 dark:text-gray-100 placeholder-gray-600 px-3 py-2 outline-none focus:border-gjs-blue focus:ring-1 focus:ring-gjs-blue transition"
             />
           </div>
 
@@ -96,7 +96,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-md bg-dark-bg-3 border border-white/10 text-[13px] text-gray-100 placeholder-gray-600 px-3 py-2 outline-none focus:border-gjs-blue focus:ring-1 focus:ring-gjs-blue transition"
+              className="w-full rounded-md bg-light-bg-3 dark:bg-dark-bg-3 border border-gray-300 dark:border-white/10 text-[13px] text-gray-900 dark:text-gray-100 placeholder-gray-600 px-3 py-2 outline-none focus:border-gjs-blue focus:ring-1 focus:ring-gjs-blue transition"
             />
           </div>
 

@@ -5,7 +5,7 @@ import App from './App'
 import './index.css'
 
 // Apply saved theme before first render to avoid flash
-const savedTheme = localStorage.getItem('theme')
+const savedTheme = localStorage.getItem('vant-theme')
 if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
   document.documentElement.classList.add('dark')
 }

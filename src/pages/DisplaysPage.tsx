@@ -44,7 +44,7 @@ function StatusBadge({ status }: { status: string }) {
 function DisplayCard({ display }: { display: Display }) {
   const isPortrait = display.orientation === 'portrait'
   return (
-    <div className="group rounded-xl bg-dark-bg-2 border border-white/5 hover:border-gjs-blue/30 hover:shadow-lg transition-all overflow-hidden cursor-pointer">
+    <div className="group rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 hover:border-gjs-blue/30 hover:shadow-lg transition-all overflow-hidden cursor-pointer">
       {/* Thumbnail area */}
       <div className="relative h-[110px] bg-gradient-to-br from-dark-bg-1 to-dark-bg-3 flex items-center justify-center overflow-hidden">
         {/* Grid overlay */}
@@ -57,7 +57,7 @@ function DisplayCard({ display }: { display: Display }) {
         />
         {/* Screen shape */}
         <div
-          className={`border border-white/10 rounded ${display.status === 'online' ? 'bg-status-online/5' : ''}`}
+          className={`border border-gray-300 dark:border-white/10 rounded ${display.status === 'online' ? 'bg-status-online/5' : ''}`}
           style={isPortrait ? { width: 36, height: 62 } : { width: 72, height: 42 }}
         />
         {/* Status badge */}
@@ -75,7 +75,7 @@ function DisplayCard({ display }: { display: Display }) {
       <div className="p-3.5">
         <div className="flex items-center gap-2">
           <Monitor size={14} className="text-gray-500 flex-shrink-0" />
-          <span className="text-[14px] font-medium text-gray-100 truncate">{display.name}</span>
+          <span className="text-[14px] font-medium text-gray-900 dark:text-gray-100 truncate">{display.name}</span>
         </div>
         {display.location_name && (
           <p className="text-[12px] text-gray-500 mt-1 truncate">{display.location_name}</p>
@@ -110,11 +110,11 @@ function DisplayCard({ display }: { display: Display }) {
 
 function DisplayRow({ display }: { display: Display }) {
   return (
-    <div className="flex items-center px-4 py-3 border-b border-white/5 hover:bg-dark-bg-3 cursor-pointer transition-colors">
+    <div className="flex items-center px-4 py-3 border-b border-gray-200 dark:border-white/5 hover:bg-light-bg-3 dark:hover:bg-light-bg-3 dark:hover:bg-dark-bg-3 cursor-pointer transition-colors">
       <div className="flex items-center gap-3 flex-[2.5]">
         <Monitor size={15} className="text-gray-600" />
         <div>
-          <p className="text-[13px] font-medium text-gray-100">{display.name}</p>
+          <p className="text-[13px] font-medium text-gray-900 dark:text-gray-100">{display.name}</p>
           {display.location_name && <p className="text-[12px] text-gray-500">{display.location_name}</p>}
         </div>
       </div>
@@ -201,10 +201,10 @@ export default function DisplaysPage() {
           <button
             key={sf.key}
             onClick={() => setStatusFilter(sf.key)}
-            className={`flex-1 min-w-[130px] px-4 py-4 rounded-xl bg-dark-bg-2 border text-left transition-all ${
+            className={`flex-1 min-w-[130px] px-4 py-4 rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border text-left transition-all ${
               statusFilter === sf.key
                 ? 'border-gjs-blue/50 shadow-md'
-                : 'border-white/5 hover:border-white/10'
+                : 'border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-gray-300 dark:hover:border-white/10'
             }`}
           >
             <div className={`text-[30px] font-light leading-none ${summaryColor[sf.key]}`}>
@@ -219,21 +219,21 @@ export default function DisplaysPage() {
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
         <div className="flex items-center gap-2">
           {/* Search */}
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-dark-bg-3 border border-white/5 min-w-[220px]">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-light-bg-3 dark:bg-dark-bg-3 border border-gray-200 dark:border-white/5 min-w-[220px]">
             <Search size={14} className="text-gray-600 flex-shrink-0" />
             <input
               type="text"
               placeholder="Search displays…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-transparent text-[13px] text-gray-100 placeholder-gray-600 outline-none w-full"
+              className="bg-transparent text-[13px] text-gray-900 dark:text-gray-100 placeholder-gray-600 outline-none w-full"
             />
           </div>
           {/* Group filter */}
           <select
             value={groupFilter}
             onChange={(e) => setGroupFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg bg-dark-bg-3 border border-white/5 text-[13px] text-gray-100 outline-none cursor-pointer"
+            className="px-3 py-2 rounded-lg bg-light-bg-3 dark:bg-dark-bg-3 border border-gray-200 dark:border-white/5 text-[13px] text-gray-900 dark:text-gray-100 outline-none cursor-pointer"
           >
             <option value="all">All Groups</option>
             {groups.map((g) => (
@@ -246,13 +246,13 @@ export default function DisplaysPage() {
 
         <div className="flex items-center gap-2">
           {/* View mode toggle */}
-          <div className="flex rounded-lg overflow-hidden border border-white/5">
+          <div className="flex rounded-lg overflow-hidden border border-gray-200 dark:border-white/5">
             <button
               onClick={() => setViewMode('grid')}
               className={`flex items-center justify-center px-2.5 py-2 ${
                 viewMode === 'grid'
                   ? 'bg-gjs-blue/15 text-gjs-blue'
-                  : 'bg-dark-bg-3 text-gray-500 hover:text-gray-300'
+                  : 'bg-light-bg-3 dark:bg-dark-bg-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300'
               }`}
             >
               <LayoutGrid size={15} />
@@ -262,7 +262,7 @@ export default function DisplaysPage() {
               className={`flex items-center justify-center px-2.5 py-2 ${
                 viewMode === 'list'
                   ? 'bg-gjs-blue/15 text-gjs-blue'
-                  : 'bg-dark-bg-3 text-gray-500 hover:text-gray-300'
+                  : 'bg-light-bg-3 dark:bg-dark-bg-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300'
               }`}
             >
               <List size={15} />
@@ -305,9 +305,9 @@ export default function DisplaysPage() {
 
       {/* List view */}
       {!loading && !error && filtered.length > 0 && viewMode === 'list' && (
-        <div className="rounded-xl border border-white/5 overflow-hidden">
+        <div className="rounded-xl border border-gray-200 dark:border-white/5 overflow-hidden">
           {/* Header */}
-          <div className="flex px-4 py-2.5 bg-dark-bg-3 border-b border-white/5 text-[11px] text-gray-500 font-semibold uppercase tracking-widest">
+          <div className="flex px-4 py-2.5 bg-light-bg-3 dark:bg-dark-bg-3 border-b border-gray-200 dark:border-white/5 text-[11px] text-gray-500 font-semibold uppercase tracking-widest">
             <span className="flex-[2.5]">Display</span>
             <span className="flex-1">Status</span>
             <span className="flex-1">Hardware</span>

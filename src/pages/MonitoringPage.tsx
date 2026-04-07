@@ -57,7 +57,7 @@ function MiniBar({
     value >= crit ? 'bg-red-400' : value >= warn ? 'bg-yellow-400' : 'bg-status-online'
   return (
     <div className="flex items-center gap-1.5">
-      <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
+      <div className="w-16 h-1.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
         <div
           className={`h-full rounded-full transition-all ${color}`}
           style={{ width: `${Math.min(value, 100)}%` }}
@@ -87,8 +87,8 @@ function SummaryCards({ displays }: SummaryCardsProps) {
       label: 'Total Displays',
       value: total,
       icon: Monitor,
-      color: 'text-gray-300',
-      bg: 'bg-white/5',
+      color: 'text-gray-700 dark:text-gray-300',
+      bg: 'bg-gray-100 dark:bg-white/5',
     },
     {
       label: 'Online',
@@ -118,7 +118,7 @@ function SummaryCards({ displays }: SummaryCardsProps) {
       {cards.map(({ label, value, icon: Icon, color, bg }) => (
         <div
           key={label}
-          className="rounded-xl bg-dark-bg-2 border border-white/5 px-5 py-4"
+          className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 px-5 py-4"
         >
           <div className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${bg} mb-3`}>
             <Icon size={16} className={color} />
@@ -146,7 +146,7 @@ function HealthGrid({ displays }: { displays: Display[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-[13px]">
         <thead>
-          <tr className="border-b border-white/5 text-gray-500 text-[12px] uppercase tracking-wider">
+          <tr className="border-b border-gray-200 dark:border-white/5 text-gray-500 text-[12px] uppercase tracking-wider">
             <th className="text-left pb-2.5 pr-4 font-medium">Display</th>
             <th className="text-left pb-2.5 pr-4 font-medium">Status</th>
             <th className="text-left pb-2.5 pr-4 font-medium">CPU</th>
@@ -164,13 +164,13 @@ function HealthGrid({ displays }: { displays: Display[] }) {
             return (
               <tr
                 key={d.id}
-                className="border-b border-white/5 hover:bg-dark-bg-3 transition-colors"
+                className="border-b border-gray-200 dark:border-white/5 hover:bg-light-bg-3 dark:hover:bg-light-bg-3 dark:hover:bg-dark-bg-3 transition-colors"
               >
                 <td className="py-3 pr-4">
                   <div className="flex items-center gap-2">
                     <Monitor size={13} className="text-gray-600 flex-shrink-0" />
                     <div>
-                      <p className="text-gray-100 font-medium truncate max-w-[140px]">{d.name}</p>
+                      <p className="text-gray-900 dark:text-gray-100 font-medium truncate max-w-[140px]">{d.name}</p>
                       {d.location_name && (
                         <p className="text-[11px] text-gray-600 truncate max-w-[140px]">
                           {d.location_name}
@@ -319,11 +319,11 @@ function DetailPanel({ display }: { display: Display }) {
   const latest = data[data.length - 1] ?? null
 
   return (
-    <div className="rounded-xl bg-dark-bg-2 border border-white/5 p-5">
+    <div className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Monitor size={14} className="text-gjs-blue" />
-          <span className="text-[14px] font-semibold text-gray-100">{display.name}</span>
+          <span className="text-[14px] font-semibold text-gray-900 dark:text-gray-100">{display.name}</span>
         </div>
         {/* Period selector */}
         <div className="flex gap-1">
@@ -334,7 +334,7 @@ function DetailPanel({ display }: { display: Display }) {
               className={`px-2.5 py-1 rounded text-[12px] transition-colors ${
                 period === p.value
                   ? 'bg-gjs-blue/20 text-gjs-blue font-semibold'
-                  : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                  : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-100 dark:hover:bg-white/5'
               }`}
             >
               {p.label}
@@ -354,7 +354,7 @@ function DetailPanel({ display }: { display: Display }) {
               { label: 'Disk', metric: 'disk_percent', icon: HardDrive, warn: 80, crit: 90 },
             ] as const
           ).map(({ label, metric, icon: Icon, warn, crit }) => (
-            <div key={label} className="rounded-lg bg-dark-bg-3 p-3">
+            <div key={label} className="rounded-lg bg-light-bg-3 dark:bg-dark-bg-3 p-3">
               <div className="flex items-center gap-1.5 mb-2">
                 <Icon size={12} className="text-gray-500" />
                 <span className="text-[11px] text-gray-500 uppercase tracking-wider">{label}</span>
@@ -389,19 +389,19 @@ function DetailPanel({ display }: { display: Display }) {
       )}
 
       <div className="mt-3 grid grid-cols-3 gap-4 text-[12px]">
-        <div className="rounded-lg bg-dark-bg-3 p-3">
+        <div className="rounded-lg bg-light-bg-3 dark:bg-dark-bg-3 p-3">
           <p className="text-gray-500 mb-1">Uptime</p>
-          <p className="text-gray-100 font-mono">{fmtUptime(latest?.uptime_sec ?? null)}</p>
+          <p className="text-gray-900 dark:text-gray-100 font-mono">{fmtUptime(latest?.uptime_sec ?? null)}</p>
         </div>
-        <div className="rounded-lg bg-dark-bg-3 p-3">
+        <div className="rounded-lg bg-light-bg-3 dark:bg-dark-bg-3 p-3">
           <p className="text-gray-500 mb-1">Network</p>
           <p className={latest?.net_connected ? 'text-status-online' : 'text-status-offline'}>
             {latest?.net_connected ? (latest.net_type ?? 'Connected') : 'Offline'}
           </p>
         </div>
-        <div className="rounded-lg bg-dark-bg-3 p-3">
+        <div className="rounded-lg bg-light-bg-3 dark:bg-dark-bg-3 p-3">
           <p className="text-gray-500 mb-1">Playback</p>
-          <p className="text-gray-100 capitalize">{latest?.playback_status ?? '—'}</p>
+          <p className="text-gray-900 dark:text-gray-100 capitalize">{latest?.playback_status ?? '—'}</p>
         </div>
       </div>
     </div>
@@ -426,7 +426,7 @@ export default function MonitoringPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-100">Fleet Monitoring</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Fleet Monitoring</h1>
           <p className="text-[13px] text-gray-500 mt-0.5">
             Real-time health across {displays.length} display{displays.length !== 1 ? 's' : ''}
           </p>
@@ -434,7 +434,7 @@ export default function MonitoringPage() {
         <button
           onClick={fetchFleet}
           disabled={loading}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 text-gray-400 hover:text-gray-100 hover:bg-white/10 transition-colors text-[13px] disabled:opacity-50"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 text-gray-400 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-200 dark:hover:bg-white/10 transition-colors text-[13px] disabled:opacity-50"
         >
           <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
           Refresh
@@ -454,8 +454,8 @@ export default function MonitoringPage() {
       {selectedDisplay && <DetailPanel display={selectedDisplay} />}
 
       {/* Health grid */}
-      <div className="rounded-xl bg-dark-bg-2 border border-white/5 p-5">
-        <h2 className="text-[14px] font-semibold text-gray-200 mb-4">Display Health</h2>
+      <div className="rounded-xl bg-light-bg-2 dark:bg-dark-bg-2 border border-gray-200 dark:border-white/5 p-5">
+        <h2 className="text-[14px] font-semibold text-gray-800 dark:text-gray-200 mb-4">Display Health</h2>
         {loading && displays.length === 0 ? (
           <div className="text-center py-10 text-gray-600 text-[13px]">Loading fleet data…</div>
         ) : (
@@ -468,7 +468,7 @@ export default function MonitoringPage() {
           />
         )}
         {displays.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-white/5">
+          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-white/5">
             <p className="text-[12px] text-gray-600">
               Click a display name to view telemetry detail.
             </p>
@@ -480,7 +480,7 @@ export default function MonitoringPage() {
                   className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
                     selectedId === d.id
                       ? 'bg-gjs-blue/20 border-gjs-blue/40 text-gjs-blue'
-                      : 'border-white/10 text-gray-500 hover:text-gray-300 hover:border-white/20'
+                      : 'border-gray-300 dark:border-white/10 text-gray-500 hover:text-gray-700 dark:hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-400 dark:hover:border-gray-400 dark:hover:border-white/20'
                   }`}
                 >
                   {d.name}
